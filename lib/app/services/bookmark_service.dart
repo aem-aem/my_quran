@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class BookmarkService {
-  static final BookmarkService _instance = BookmarkService._internal();
   factory BookmarkService() => _instance;
   BookmarkService._internal();
+  static final BookmarkService _instance = BookmarkService._internal();
 
   static const String _bookmarksKey = 'quran_bookmarks';
 

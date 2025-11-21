@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -37,17 +35,14 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late final ScrollController _scrollController;
-  Timer? savePositionTimer;
   final int _totalPages = quran.totalPagesCount;
   final Map<int, GlobalKey> _pageKeys = {};
-
-  // Or for compact version:
   final GlobalKey<FloatingBottomBarState> _bottomBarKey = GlobalKey();
+  final int _loadMoreThreshold = 3;
 
   ScrollDirection _lastScrollDirection = ScrollDirection.idle;
   int _loadedStartPage = 1;
   int _loadedEndPage = 5;
-  final int _loadMoreThreshold = 3;
 
   // Current position tracking
   final ValueNotifier<ReadingPosition> _currentPositionNotifier = ValueNotifier(
@@ -105,7 +100,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         // App being terminated
         debugPrint('📱 App detached - saving position');
         ReadingPositionService.savePosition(_currentPosition);
-      // ignore: no_default_cases
+      // ignore: no_default_cases ()
       default:
         break;
     }
@@ -290,7 +285,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 PinnedHeaderSliver(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: context.colorScheme.surfaceContainerLow,
+                      color: context.colorScheme.surfaceContainerLowest,
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -450,22 +445,26 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
 
   void _loadPageData() {
     final pageData = quran.getPageData(widget.pageNumber);
-
-    page = QuranPage(
-      pageNumber: widget.pageNumber,
-      surahs: pageData
-          .map(
-            (e) => SurahInPage(
-              surahNumber: e['surah'] as int,
-              verses: _surahVersesInPage(
-                surahNumber: e['surah'] as int,
-                start: e['start'] as int,
-                end: e['end'] as int,
-              ),
+    final List<SurahInPage> surahs = [];
+    for (final surahData in pageData) {
+      if (surahData case {
+        'surah': final int surahNum,
+        'start': final int verseNum,
+        'end': final int verseNumEnd,
+      }) {
+        surahs.add(
+          SurahInPage(
+            surahNumber: surahNum,
+            verses: _surahVersesInPage(
+              surahNumber: surahNum,
+              start: verseNum,
+              end: verseNumEnd,
             ),
-          )
-          .toList(),
-    );
+          ),
+        );
+      }
+    }
+    page = QuranPage(pageNumber: widget.pageNumber, surahs: surahs);
   }
 
   List<Verse> _surahVersesInPage({

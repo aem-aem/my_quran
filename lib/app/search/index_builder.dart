@@ -37,7 +37,7 @@ class QuranSearchIndexBuilder {
           );
 
           // Also add variations
-          for (var variation in ArabicTextProcessor.getVariations(word)) {
+          for (final variation in ArabicTextProcessor.getVariations(word)) {
             if (variation != word) {
               index.index[variation] ??= [];
               index.index[variation]!.add(

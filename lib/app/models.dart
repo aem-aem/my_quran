@@ -24,7 +24,7 @@ class SurahInPage {
   Verse? get lastVerse => verses.lastOrNull;
   final List<Verse> verses;
 
-  /// Returns true if this surah has a Basmala.
+  /// Returns true if this surah has Basmala.
   ///
   /// It will return false for "Al-Fatihah" and "At-Tawbah".
   bool get hasBasmala => surahNumber != 1 && surahNumber != 9;
@@ -69,7 +69,8 @@ class ReadingPosition {
 
   @override
   String toString() =>
-      'Page: $pageNumber, Surah: $surahNumber, Verse: $verseNumber, Juz: $juzNumber';
+      'Page: $pageNumber, Surah: $surahNumber, Verse: $verseNumber, '
+      'Juz: $juzNumber';
 
   Map<String, dynamic> toJson() => {
     'pageNumber': pageNumber,
@@ -80,13 +81,7 @@ class ReadingPosition {
 }
 
 class VerseBookmark {
-  final String id;
-  final int surah;
-  final int verse;
-  final int pageNumber;
-  final String verseText;
-  final DateTime createdAt;
-  final String? note; // Optional user note
+  // Optional user note
 
   VerseBookmark({
     required this.id,
@@ -98,16 +93,6 @@ class VerseBookmark {
     this.note,
   });
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'surah': surah,
-    'verse': verse,
-    'pageNumber': pageNumber,
-    'verseText': verseText,
-    'createdAt': createdAt.toIso8601String(),
-    'note': note,
-  };
-
   factory VerseBookmark.fromJson(Map<String, dynamic> json) => VerseBookmark(
     id: json['id'] as String,
     surah: json['surah'] as int,
@@ -117,6 +102,23 @@ class VerseBookmark {
     createdAt: DateTime.parse(json['createdAt'] as String),
     note: json['note'] as String?,
   );
+  final String id;
+  final int surah;
+  final int verse;
+  final int pageNumber;
+  final String verseText;
+  final DateTime createdAt;
+  final String? note;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'surah': surah,
+    'verse': verse,
+    'pageNumber': pageNumber,
+    'verseText': verseText,
+    'createdAt': createdAt.toIso8601String(),
+    'note': note,
+  };
 
   String get verseKey => '$surah:$verse';
 }

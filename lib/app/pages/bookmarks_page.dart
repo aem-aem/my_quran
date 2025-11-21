@@ -93,7 +93,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
           ),
           TextButton(
             onPressed: () async {
-              for (var bookmark in _bookmarkService.bookmarks) {
+              for (final bookmark in _bookmarkService.bookmarks) {
                 await _bookmarkService.removeBookmark(bookmark.id);
               }
               setState(() {});
@@ -135,12 +135,13 @@ class _BookmarksPageState extends State<BookmarksPage> {
             onPressed: () async {
               await _bookmarkService.updateNote(bookmark.id, controller.text);
               setState(() {});
-              if (mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم حفظ الملاحظة')),
-                );
+              if (!context.mounted) {
+                return;
               }
+              Navigator.pop(context);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('تم حفظ الملاحظة')));
             },
             child: const Text('حفظ'),
           ),
@@ -229,7 +230,7 @@ class _BookmarkCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceVariant.withOpacity(0.5),
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(

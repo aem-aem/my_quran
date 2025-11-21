@@ -32,7 +32,7 @@ class QuranSearchEngine {
     final locations = _index.index[word] ?? [];
     final results = <SearchResult>[];
 
-    for (var location in locations.take(maxResults)) {
+    for (final location in locations.take(maxResults)) {
       final verseKey = '${location.surah}:${location.verse}';
       final verseText =
           _index.verseCache[verseKey] ??
@@ -58,7 +58,7 @@ class QuranSearchEngine {
     final candidateVerses = <String, List<int>>{};
 
     // Collect all verses containing the first word
-    for (var loc in firstWordLocations) {
+    for (final loc in firstWordLocations) {
       final key = '${loc.surah}:${loc.verse}';
       candidateVerses[key] ??= [];
       candidateVerses[key]!.add(loc.position);
@@ -67,7 +67,7 @@ class QuranSearchEngine {
     final results = <SearchResult>[];
 
     // Check each candidate verse
-    for (var entry in candidateVerses.entries) {
+    for (final entry in candidateVerses.entries) {
       final parts = entry.key.split(':');
       final surah = int.parse(parts[0]);
       final verse = int.parse(parts[1]);

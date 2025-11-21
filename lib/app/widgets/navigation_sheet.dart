@@ -46,9 +46,12 @@ class _QuranNavigationBottomSheetState
 
     // Get initial position data
     final pageData = quran.getPageData(_currentPage);
-    if (pageData.isNotEmpty) {
-      _currentSurah = pageData.first['surah'] as int;
-      _currentVerse = pageData.first['start'] as int;
+    if (pageData.firstOrNull case {
+      'surah': final int surahNum,
+      'start': final int verseNum,
+    }) {
+      _currentSurah = surahNum;
+      _currentVerse = verseNum;
       _currentJuz = quran.getJuzNumber(_currentSurah, _currentVerse);
     }
 
@@ -101,9 +104,10 @@ class _QuranNavigationBottomSheetState
     _isUpdating = true;
 
     final pageData = quran.getPageData(pageNum);
-    if (pageData.isNotEmpty) {
-      final surahNum = pageData.first['surah'] as int;
-      final verseNum = pageData.first['start'] as int;
+    if (pageData.firstOrNull case {
+      'surah': final int surahNum,
+      'start': final int verseNum,
+    }) {
       final juzNum = quran.getJuzNumber(surahNum, verseNum);
 
       setState(() {
@@ -406,7 +410,7 @@ class _QuranNavigationBottomSheetState
           ),
           // Action buttons
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Row(
               children: [
                 Expanded(

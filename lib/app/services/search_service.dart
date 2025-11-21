@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import 'package:my_quran/app/search/engine.dart';
 import 'package:my_quran/app/search/index_builder.dart';
 import 'package:my_quran/app/search/models.dart';
@@ -9,7 +10,7 @@ class SearchService {
   static final SearchService _instance = SearchService._internal();
 
   QuranSearchIndex? _index;
-  QuranSearchEngine? _engine;
+  late final QuranSearchEngine _engine;
 
   bool get isReady => _index?.isInitialized ?? false;
 
@@ -40,7 +41,7 @@ class SearchService {
       await initialize();
     }
 
-    return _engine!.search(
+    return _engine.search(
       query,
       maxResults: maxResults,
       exactMatch: exactMatch,

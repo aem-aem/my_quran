@@ -26,13 +26,12 @@ class ArabicTextProcessor {
   // Tokenize Arabic text into words
   static List<String> tokenize(String text) {
     // Remove punctuation and extra spaces
-    text = text.replaceAll(RegExp(r'[۞۩،؛؟\.\,\!\?\:\;]'), ' ');
-
-    // Split by whitespace and filter empty
+    // then split by whitespace and filter empty
     return text
+        .replaceAll(RegExp(r'[۞۩،؛؟\.\,\!\?\:\;]'), ' ')
         .split(RegExp(r'\s+'))
         .where((word) => word.isNotEmpty)
-        .map((word) => normalize(word))
+        .map(normalize)
         .toList();
   }
 
