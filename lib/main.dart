@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:my_quran/app/models.dart';
@@ -27,6 +28,18 @@ Future<void> main() async {
     settingsService: SettingsService(),
   );
   await settingsController.init();
+
+  // FORCE TRANSPARENT STATUS BAR
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  // Edge-to-Edge mode for Android 10+ (Removes bottom black bar)
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   runApp(MyApp(lastPosition, settingsController));
 }
 
