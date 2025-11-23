@@ -156,24 +156,20 @@ class FloatingBottomBarState extends State<FloatingBottomBar>
           height: 48,
           decoration: isHighlighted
               ? BoxDecoration(
+                  // LIGHTER VIBE:
+                  // Instead of solid primary, use a soft wash of the primary color
+                  color: colorScheme.primary.withOpacity(0.12),
                   shape: BoxShape.circle,
-                  color:
-                      colorScheme.primary, // Solid primary color for highlight
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  border: Border.all(
+                    color: colorScheme.primary.withOpacity(0.3),
+                    width: 1,
+                  ),
                 )
               : null,
           child: Icon(
             icon,
-            // size: 26,
             color: isHighlighted
-                ? colorScheme
-                      .onPrimary // White/Contrast on highlighted
+                ? colorScheme.primary
                 : colorScheme.onSurfaceVariant,
           ),
         ),

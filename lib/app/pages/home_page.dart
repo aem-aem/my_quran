@@ -771,12 +771,13 @@ class _SurahTextBlockState extends State<_SurahTextBlock> {
   @override
   Widget build(BuildContext context) {
     _ranges.clear();
+    final isDarkMode = Theme.brightnessOf(context) == Brightness.dark;
     int charCount = 0;
     final spans = <InlineSpan>[];
     final highlightedTextStyle = TextStyle(
-      backgroundColor: Theme.of(
-        context,
-      ).colorScheme.primaryContainer.withOpacity(0.5),
+      backgroundColor: isDarkMode
+          ? Theme.of(context).colorScheme.surfaceBright
+          : Theme.of(context).colorScheme.surfaceContainer,
     );
     for (final verse in widget.surah.verses) {
       // 1. Text

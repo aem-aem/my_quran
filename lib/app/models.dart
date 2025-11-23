@@ -139,8 +139,8 @@ enum FontFamily {
 
   String get arabicName {
     return switch (this) {
-      FontFamily.rustam => 'روستام',
-      FontFamily.scheherazade => 'ششرازاد',
+      FontFamily.rustam => 'الخط الأول',
+      FontFamily.scheherazade => 'الخط الثاني',
     };
   }
 }
