@@ -1,13 +1,3 @@
-class QuranSearchIndex {
-  // Inverted index: word -> List of verse locations
-  final Map<String, List<VerseLocation>> index = {};
-
-  // Verse content cache for quick access
-  final Map<String, String> verseCache = {};
-
-  bool isInitialized = false;
-}
-
 class VerseLocation {
   // Word position in verse
 
@@ -34,16 +24,7 @@ class VerseLocation {
 }
 
 class SearchResult {
-  SearchResult({
-    required this.surah,
-    required this.verse,
-    required this.text,
-    required this.matchPositions,
-    required this.pageNumber,
-  });
+  SearchResult({required this.surah, required this.verse});
   final int surah;
   final int verse;
-  final String text;
-  final List<int> matchPositions; // Positions of matched words
-  final int pageNumber;
 }

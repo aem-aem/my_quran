@@ -1,50 +1,106 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
-import 'package:my_quran/app/search/engine.dart';
-import 'package:my_quran/app/search/index_builder.dart';
+import 'package:flutter/services.dart';
 import 'package:my_quran/app/search/models.dart';
+import 'package:my_quran/app/search/processor.dart';
 
 class SearchService {
-  factory SearchService() => _instance;
-  SearchService._internal();
-  static final SearchService _instance = SearchService._internal();
+  static List<String> _sortedKeys = [];
 
-  QuranSearchIndex? _index;
-  late final QuranSearchEngine _engine;
+  // FIX 1: Change type to Map<String, dynamic> to handle JSON safely
+  static Map<String, dynamic> _indexData = {};
 
-  bool get isReady => _index?.isInitialized ?? false;
+  static bool isReady = false;
 
-  Future<void> initialize() async {
+  static Future<void> init() async {
     if (isReady) return;
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/search_index.json',
+      );
+      final data = await compute(_parseJson, jsonString);
 
-    debugPrint('🚀 Initializing Quran search service...');
+      _sortedKeys = (data['keys'] as List).cast<String>();
 
-    // Try to load from cache
-    _index = await QuranSearchIndexBuilder.loadIndex();
+      // FIX 2: Simple cast to Map<String, dynamic>
+      _indexData = data['data'] as Map<String, dynamic>;
 
-    // If not cached, build new index
-    if (_index == null) {
-      _index = await QuranSearchIndexBuilder.buildIndex();
-      await QuranSearchIndexBuilder.saveIndex(_index!);
+      isReady = true;
+      debugPrint('🔍 Search index loaded ✅');
+    } catch (e) {
+      debugPrint('❌ Error loading search index: $e');
     }
-
-    _engine = QuranSearchEngine(_index!);
-    debugPrint('✅ Search service ready');
   }
 
-  Future<List<SearchResult>> search(
-    String query, {
-    int maxResults = 50,
-    bool exactMatch = false,
-  }) async {
-    if (!isReady) {
-      await initialize();
+  static Map<String, dynamic> _parseJson(String jsonString) {
+    return jsonDecode(jsonString) as Map<String, dynamic>;
+  }
+
+  static List<SearchResult> search(String rawQuery) {
+    if (!isReady || rawQuery.trim().isEmpty) return [];
+
+    final rawWords = ArabicTextProcessor.tokenize(rawQuery);
+    if (rawWords.isEmpty) return [];
+
+    final normalizedWords = rawWords
+        .map(ArabicTextProcessor.normalize)
+        .toList();
+
+    final List<Set<int>> matchesPerWord = [];
+
+    for (final word in normalizedWords) {
+      final matchesForThisWord = _findMatchesForSingleToken(word);
+      if (matchesForThisWord.isEmpty) return [];
+      matchesPerWord.add(matchesForThisWord);
     }
 
-    return _engine.search(
-      query,
-      maxResults: maxResults,
-      exactMatch: exactMatch,
-    );
+    Set<int> finalIds = matchesPerWord[0];
+    for (int i = 1; i < matchesPerWord.length; i++) {
+      finalIds = finalIds.intersection(matchesPerWord[i]);
+    }
+
+    final results = finalIds.map((id) {
+      final surah = id ~/ 1000;
+      final verse = id % 1000;
+      return SearchResult(surah: surah, verse: verse);
+    }).toList();
+
+    results.sort((a, b) {
+      if (a.surah != b.surah) return a.surah.compareTo(b.surah);
+      return a.verse.compareTo(b.verse);
+    });
+
+    return results;
+  }
+
+  static Set<int> _findMatchesForSingleToken(String token) {
+    final Set<int> results = {};
+
+    // Exact Match
+    if (_indexData.containsKey(token)) {
+      // FIX 3: Cast the value to List here, at the moment of usage
+      final list = _indexData[token] as List;
+      results.addAll(list.cast<int>());
+    }
+
+    // Prefix Match
+    for (final key in _sortedKeys) {
+      if (key.compareTo(token) < 0) continue;
+      if (!key.startsWith(token)) {
+        if (key.length >= token.length &&
+            key.substring(0, token.length).compareTo(token) > 0) {
+          break;
+        }
+        continue;
+      }
+
+      if (_indexData.containsKey(key)) {
+        // FIX 4: Cast here as well
+        final list = _indexData[key] as List;
+        results.addAll(list.cast<int>());
+      }
+    }
+
+    return results;
   }
 }

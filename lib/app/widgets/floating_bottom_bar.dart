@@ -1,15 +1,14 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class FloatingBottomBar extends StatefulWidget {
   const FloatingBottomBar({
-    // required this.onSettings,
     required this.onSearch,
     required this.onNavigate,
     required this.onBookmarks,
-
     super.key,
   });
-  // final VoidCallback onSettings;
+
   final VoidCallback onSearch;
   final VoidCallback onNavigate;
   final VoidCallback onBookmarks;
@@ -28,15 +27,19 @@ class FloatingBottomBarState extends State<FloatingBottomBar>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400), // Slightly smoother
+      reverseDuration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     _offsetAnimation =
-        Tween<Offset>(begin: Offset.zero, end: const Offset(0, 2)).animate(
+        Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(0, 2), // Moves down out of view
+        ).animate(
           CurvedAnimation(
             parent: _animationController,
-            curve: Curves.easeInOut,
+            curve: Curves.easeInOutCubicEmphasized,
           ),
         );
   }
@@ -50,14 +53,14 @@ class FloatingBottomBarState extends State<FloatingBottomBar>
   void show() {
     if (!_isVisible) {
       _animationController.reverse();
-      _isVisible = true;
+      setState(() => _isVisible = true);
     }
   }
 
   void hide() {
     if (_isVisible) {
       _animationController.forward();
-      _isVisible = false;
+      setState(() => _isVisible = false);
     }
   }
 
@@ -65,48 +68,69 @@ class FloatingBottomBarState extends State<FloatingBottomBar>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     return SlideTransition(
       position: _offsetAnimation,
+      // 1. Outer Container handles Margins and Shadows
       child: Container(
-        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        height: 60,
+        margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha((255 * 0.15).round()),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+              spreadRadius: -2,
             ),
           ],
         ),
-        child: Material(
-          color: Colors.transparent,
+        // 2. ClipRRect handles the rounded corners for the Glass Blur
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildIconButton(
-                icon: Icons.search_rounded,
-                onPressed: widget.onSearch,
-                tooltip: 'بحث',
-                colorScheme: colorScheme,
+          child: BackdropFilter(
+            // 3. The actual Blur Effect
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              height: 64,
+              decoration: BoxDecoration(
+                // 4. CRITICAL: The color MUST have opacity for blur to show
+                color: colorScheme.surfaceContainer.withOpacity(0.75),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withOpacity(0.2),
+                  width: 0.5,
+                ),
               ),
-              _buildIconButton(
-                icon: Icons.menu_book_rounded,
-                onPressed: widget.onNavigate,
-                tooltip: 'انتقال سريع',
-                colorScheme: colorScheme,
-                isHighlighted: true,
+              child: Material(
+                color: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildIconButton(
+                      context: context,
+                      icon: Icons.search_rounded,
+                      onPressed: widget.onSearch,
+                      tooltip: 'بحث',
+                    ),
+                    _buildIconButton(
+                      context: context,
+                      icon: Icons.menu_book_rounded,
+                      onPressed: widget.onNavigate,
+                      tooltip: 'انتقال سريع',
+                      isHighlighted: true,
+                    ),
+                    _buildIconButton(
+                      context: context,
+                      icon: Icons
+                          .bookmark_border_rounded, // Rounded variant matches better
+                      onPressed: widget.onBookmarks,
+                      tooltip: 'العلامات المرجعية',
+                    ),
+                  ],
+                ),
               ),
-              _buildIconButton(
-                icon: Icons.bookmark_border_outlined,
-                onPressed: widget.onBookmarks,
-                tooltip: 'العلامات المرجعية',
-                colorScheme: colorScheme,
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -114,31 +138,42 @@ class FloatingBottomBarState extends State<FloatingBottomBar>
   }
 
   Widget _buildIconButton({
+    required BuildContext context,
     required IconData icon,
     required VoidCallback onPressed,
     required String tooltip,
-    required ColorScheme colorScheme,
     bool isHighlighted = false,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Tooltip(
       message: tooltip,
       child: InkWell(
         onTap: onPressed,
-        customBorder: const CircleBorder(),
+        borderRadius: BorderRadius.circular(20),
         child: Container(
-          width: 44,
-          height: 44,
+          width: 48, // Larger touch target
+          height: 48,
           decoration: isHighlighted
               ? BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorScheme.surfaceContainerLow,
+                  color:
+                      colorScheme.primary, // Solid primary color for highlight
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 )
               : null,
           child: Icon(
             icon,
-            size: 26,
+            // size: 26,
             color: isHighlighted
-                ? colorScheme.primary
+                ? colorScheme
+                      .onPrimary // White/Contrast on highlighted
                 : colorScheme.onSurfaceVariant,
           ),
         ),

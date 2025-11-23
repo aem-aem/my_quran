@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' show ThemeMode;
+import 'package:my_quran/app/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
@@ -13,15 +16,19 @@ class SettingsService {
     return language;
   }
 
-  Future<void> setFontFamily(String fontFamily) async {
+  Future<void> setFontFamily(FontFamily fontFamily) async {
     final sharedPrefs = await SharedPreferences.getInstance();
-    await sharedPrefs.setString('fontFamily', fontFamily);
+    await sharedPrefs.setInt('fontFamily', fontFamily.index);
   }
 
-  Future<String> loadFontFamily() async {
+  Future<FontFamily> loadFontFamily() async {
     final sharedPrefs = await SharedPreferences.getInstance();
-    final fontFamily = sharedPrefs.getString('fontFamily') ?? 'Hafs';
-    return fontFamily;
+    final index = sharedPrefs.getInt('fontFamily');
+    if (index != null && index >= 0 && index < FontFamily.values.length) {
+      return FontFamily.values[index];
+    }
+    unawaited(setFontFamily(FontFamily.defaultFontFamily)); // update if invalid
+    return FontFamily.defaultFontFamily;
   }
 
   Future<void> setFontSize(int fontSize) async {

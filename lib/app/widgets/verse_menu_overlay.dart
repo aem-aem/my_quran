@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:quran/quran.dart' as quran;
+import 'package:quran/quran.dart';
 
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/services/bookmark_service.dart';
@@ -134,7 +134,9 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        quran.getSurahNameArabic(widget.surah),
+                                        Quran.instance.getSurahNameArabic(
+                                          widget.surah,
+                                        ),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -147,8 +149,11 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
                                       Text(
                                         'الآية ${_toArabicNumber(widget.verse.number)}',
                                         style: TextStyle(
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          fontFamily: 'kitab',
+                                          fontFamily: FontFamily
+                                              .arabicNumbersFontFamily
+                                              .name,
                                           color: Theme.of(
                                             context,
                                           ).colorScheme.onSurfaceVariant,
@@ -183,7 +188,7 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
                           children: [
                             _buildMenuTile(
                               icon: Icons.copy,
-                              label: 'نسخ الآية',
+                              label: 'نسخ النص',
                               onTap: _copyVerse,
                             ),
                             _buildMenuTile(
@@ -234,7 +239,7 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
   }
 
   void _copyVerse() {
-    final surahName = quran.getSurahName(widget.surah);
+    final surahName = Quran.instance.getSurahName(widget.surah);
     final textToCopy = '${widget.verse.text}\n\n[$surahName: ${widget.verse}]';
     Clipboard.setData(ClipboardData(text: textToCopy));
 
@@ -258,7 +263,7 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
         id: '${widget.surah}_${verseNum}_${DateTime.now().millisecondsSinceEpoch}',
         surah: widget.surah,
         verse: verseNum,
-        pageNumber: quran.getPageNumber(widget.surah, verseNum),
+        pageNumber: Quran.instance.getPageNumber(widget.surah, verseNum),
         verseText: widget.verse.text,
         createdAt: DateTime.now(),
       );

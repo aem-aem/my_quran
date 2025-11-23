@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/services/bookmark_service.dart';
-import 'package:quran/quran.dart' as quran;
+import 'package:quran/quran.dart';
 
-class BookmarksPage extends StatefulWidget {
-  const BookmarksPage({required this.onNavigateToPage, super.key});
-  final void Function(int page) onNavigateToPage;
+class BookmarksSheet extends StatefulWidget {
+  const BookmarksSheet({required this.onNavigateToPage, super.key});
+  final void Function({
+    required int page,
+    required int surah,
+    required int verse,
+  })
+  onNavigateToPage;
 
   @override
-  State<BookmarksPage> createState() => _BookmarksPageState();
+  State<BookmarksSheet> createState() => _BookmarksSheetState();
 }
 
-class _BookmarksPageState extends State<BookmarksPage> {
+class _BookmarksSheetState extends State<BookmarksSheet> {
   final BookmarkService _bookmarkService = BookmarkService();
 
   @override
@@ -30,7 +35,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
               return _BookmarkCard(
                 bookmark: bookmark,
                 onTap: () {
-                  widget.onNavigateToPage(bookmark.pageNumber);
+                  widget.onNavigateToPage(
+                    page: bookmark.pageNumber,
+                    surah: bookmark.surah,
+                    verse: bookmark.verse,
+                  );
                   Navigator.pop(context);
                 },
                 onDelete: () => _deleteBookmark(bookmark.id),
@@ -188,7 +197,7 @@ class _BookmarkCard extends StatelessWidget {
                 children: [
                   // Icon(Icons.bookmark, color: colorScheme.primary, size: 20),
                   Text(
-                    quran.getSurahNameArabic(bookmark.surah),
+                    Quran.instance.getSurahNameArabic(bookmark.surah),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -198,7 +207,7 @@ class _BookmarkCard extends StatelessWidget {
                     'ص ${_toArabicNumber(bookmark.pageNumber)}',
                     style: TextStyle(
                       fontSize: 13,
-                      fontFamily: 'kitab',
+                      fontFamily: FontFamily.defaultFontFamily.name,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSecondaryContainer,
                     ),

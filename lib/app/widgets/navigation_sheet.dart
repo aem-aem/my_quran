@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quran/quran.dart' as quran;
+import 'package:my_quran/app/models.dart';
+import 'package:quran/quran.dart';
 import 'dart:async';
 
 class QuranNavigationBottomSheet extends StatefulWidget {
@@ -9,7 +10,12 @@ class QuranNavigationBottomSheet extends StatefulWidget {
     super.key,
   });
   final int initialPage;
-  final void Function(int page) onNavigate;
+  final void Function({
+    required int page,
+    required int surah,
+    required int verse,
+  })
+  onNavigate;
 
   @override
   State<QuranNavigationBottomSheet> createState() =>
@@ -45,14 +51,14 @@ class _QuranNavigationBottomSheetState
     _currentPage = widget.initialPage;
 
     // Get initial position data
-    final pageData = quran.getPageData(_currentPage);
+    final pageData = Quran.instance.getPageData(_currentPage);
     if (pageData.firstOrNull case {
       'surah': final int surahNum,
       'start': final int verseNum,
     }) {
       _currentSurah = surahNum;
       _currentVerse = verseNum;
-      _currentJuz = quran.getJuzNumber(_currentSurah, _currentVerse);
+      _currentJuz = Quran.instance.getJuzNumber(_currentSurah, _currentVerse);
     }
 
     // Initialize controllers
@@ -103,12 +109,12 @@ class _QuranNavigationBottomSheetState
   void _updateFromPage(int pageNum) {
     _isUpdating = true;
 
-    final pageData = quran.getPageData(pageNum);
+    final pageData = Quran.instance.getPageData(pageNum);
     if (pageData.firstOrNull case {
       'surah': final int surahNum,
       'start': final int verseNum,
     }) {
-      final juzNum = quran.getJuzNumber(surahNum, verseNum);
+      final juzNum = Quran.instance.getJuzNumber(surahNum, verseNum);
 
       setState(() {
         _currentSurah = surahNum;
@@ -166,8 +172,8 @@ class _QuranNavigationBottomSheetState
     });
 
     // Get page for this surah
-    final pageNum = quran.getPageNumber(surahNum, 1);
-    final juzNum = quran.getJuzNumber(surahNum, 1);
+    final pageNum = Quran.instance.getPageNumber(surahNum, 1);
+    final juzNum = Quran.instance.getJuzNumber(surahNum, 1);
 
     setState(() {
       _currentPage = pageNum;
@@ -221,7 +227,7 @@ class _QuranNavigationBottomSheetState
     final juzData = _getFirstVerseOfJuz(juzNum);
     final surahNum = juzData['surah']!;
     final verseNum = juzData['verse']!;
-    final pageNum = quran.getPageNumber(surahNum, verseNum);
+    final pageNum = Quran.instance.getPageNumber(surahNum, verseNum);
 
     setState(() {
       _currentSurah = surahNum;
@@ -255,7 +261,7 @@ class _QuranNavigationBottomSheetState
     if (_isUpdating) return;
 
     final verseNum = index + 1;
-    final verseCount = quran.getVerseCount(_currentSurah);
+    final verseCount = Quran.instance.getVerseCount(_currentSurah);
 
     if (verseNum > verseCount) {
       return;
@@ -279,8 +285,8 @@ class _QuranNavigationBottomSheetState
     _isUpdating = true;
 
     // Get page for this verse
-    final pageNum = quran.getPageNumber(_currentSurah, verseNum);
-    final juzNum = quran.getJuzNumber(_currentSurah, verseNum);
+    final pageNum = Quran.instance.getPageNumber(_currentSurah, verseNum);
+    final juzNum = Quran.instance.getJuzNumber(_currentSurah, verseNum);
 
     setState(() {
       _currentPage = pageNum;
@@ -305,7 +311,10 @@ class _QuranNavigationBottomSheetState
   }
 
   Map<String, int> _getFirstVerseOfJuz(int juzNum) {
-    final firstJuzSurah = quran.getSurahAndVersesFromJuz(juzNum).entries.first;
+    final firstJuzSurah = Quran.instance
+        .getSurahAndVersesFromJuz(juzNum)
+        .entries
+        .first;
     return {'surah': firstJuzSurah.key, 'verse': firstJuzSurah.value.first};
   }
 
@@ -326,7 +335,7 @@ class _QuranNavigationBottomSheetState
                 Expanded(
                   child: _buildPicker(
                     controller: _pageController,
-                    itemCount: quran.totalPagesCount,
+                    itemCount: Quran.totalPagesCount,
                     onSelectedItemChanged: _onPageChanged,
                     builder: (index) {
                       final pageNum = index + 1;
@@ -351,7 +360,7 @@ class _QuranNavigationBottomSheetState
                       final surahNum = index + 1;
                       return Center(
                         child: Text(
-                          quran.getSurahNameArabic(surahNum),
+                          Quran.instance.getSurahNameArabic(surahNum),
                           style: TextStyle(
                             fontSize: 22,
                             color: surahNum == _currentSurah
@@ -392,7 +401,7 @@ class _QuranNavigationBottomSheetState
                 Expanded(
                   child: _buildPicker(
                     controller: _verseController,
-                    itemCount: quran.getVerseCount(_currentSurah),
+                    itemCount: Quran.instance.getVerseCount(_currentSurah),
                     onSelectedItemChanged: _onVerseChanged,
                     builder: (index) {
                       final verseNum = index + 1;
@@ -423,7 +432,11 @@ class _QuranNavigationBottomSheetState
                 Expanded(
                   child: FilledButton(
                     onPressed: () {
-                      widget.onNavigate(_currentPage);
+                      widget.onNavigate(
+                        page: _currentPage,
+                        surah: _currentSurah,
+                        verse: _currentVerse,
+                      );
                       Navigator.pop(context);
                     },
                     child: const Text('انتقال'),
@@ -443,7 +456,7 @@ class _QuranNavigationBottomSheetState
       _toArabicNumber(number),
       style: TextStyle(
         fontSize: 22,
-        fontFamily: 'kitab',
+        fontFamily: FontFamily.defaultFontFamily.name,
         color: isCurrent ? colorScheme.primary : colorScheme.onSurface,
         fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
       ),

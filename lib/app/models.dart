@@ -122,3 +122,25 @@ class VerseBookmark {
 
   String get verseKey => '$surah:$verse';
 }
+
+enum FontFamily {
+  rustam,
+  scheherazade;
+
+  static FontFamily get defaultFontFamily => scheherazade;
+  static FontFamily get arabicNumbersFontFamily => scheherazade;
+
+  String get name {
+    return switch (this) {
+      FontFamily.rustam => 'Rustam',
+      FontFamily.scheherazade => 'Scheherazade',
+    };
+  }
+
+  String get arabicName {
+    return switch (this) {
+      FontFamily.rustam => 'روستام',
+      FontFamily.scheherazade => 'ششرازاد',
+    };
+  }
+}

@@ -9,7 +9,7 @@ class ArabicTextProcessor {
     String normalized = removeDiacritics(text);
 
     // Normalize Alef variants: أ إ آ ا → ا
-    normalized = normalized.replaceAll(RegExp(r'[أإآ]'), 'ا');
+    normalized = normalized.replaceAll(RegExp('[أإآ]'), 'ا');
 
     // Normalize Taa Marbuta: ة → ه
     normalized = normalized.replaceAll('ة', 'ه');
@@ -31,7 +31,6 @@ class ArabicTextProcessor {
         .replaceAll(RegExp(r'[۞۩،؛؟\.\,\!\?\:\;]'), ' ')
         .split(RegExp(r'\s+'))
         .where((word) => word.isNotEmpty)
-        .map(normalize)
         .toList();
   }
 
