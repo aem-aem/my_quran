@@ -48,6 +48,14 @@ android {
             }
         }
     }
+    
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     buildTypes {
         getByName("release") {
             // 4. Apply Signing Config
