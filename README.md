@@ -47,12 +47,10 @@
 
 | English | العربية |
 | :--- | :--- |
-| **🚀 Ultra Lightweight**<br> optimized size (~13MB) using JSON assets and code splitting. | **🚀 خفيف جداً**<br> حجم صغير بفضل تقنيات ضغط البيانات، لا يستهلك مساحة الهاتف. |
+| **🚀 Ultra Lightweight**<br> optimized size (~17MB) using JSON assets and code splitting. | **🚀 خفيف جداً**<br> حجم صغير بفضل تقنيات ضغط البيانات، لا يستهلك مساحة الهاتف. |
 | **📴 100% Offline**<br> No internet required. No tracking. No analytics. | **📴 يعمل بدون إنترنت**<br> خصوصية تامة، لا يوجد تتبع، ولا يحتاج اتصال بالشبكة. |
-| **🔍 Smart Search**<br> Advanced search that ignores Diacritics (Tashkeel) and supports multi-word queries. | **🔍 بحث ذكي**<br> محرك بحث فوري يتجاهل التشكيل ويدعم البحث المتعدد للآيات. |
+| **🔍 Smart Search**<br> Advanced search that ignores Diacritics (Tashkeel) and supports multi-word queries. | **🔍 بحث ذكي**<br> محرك بحث فوري. |
 | **📜 Seamless Reading**<br> Vertical scrolling (Mushaf style) with high-performance rendering. | **📜 قراءة انسيابية**<br> تمرير عمودي مستمر بدلاً من تقليب الصفحات لمحاكاة المصحف. |
-| **🎨 Modern Design**<br> Glassmorphism headers, Dark Mode, and dynamic font sizing. | **🎨 واجهة عصرية**<br> تصميم زجاجي أنيق، دعم للوضع الليلي، وتحكم بحجم الخط. |
-
 ---
 
 ## 🛠 Technical Highlights
