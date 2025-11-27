@@ -108,7 +108,7 @@ class ApplicationVariantAction : Action<ApplicationVariant> {
                 val architecture = abi ?: "universal"
 
                 output.outputFileName =
-                    "MyQuran-v${versionName}-${architecture}-${versionCode}-${builtType}.apk"
+                    "MyQuran-v${versionName}-${versionCode}-${builtType}.apk"
             }
         }
     }
