@@ -248,12 +248,12 @@ class Quran {
 
   ///Takes [verseNumber], [arabicNumeral] (optional) and returns '۝' symbol with verse number
   String getVerseEndSymbol(int verseNumber, {bool arabicNumeral = true}) {
-    var arabicNumeric = '';
     final digits = verseNumber.toString().split('').toList();
 
-    if (!arabicNumeral) return '\u06dd${verseNumber}';
+    if (!arabicNumeral) return '\u06dd$verseNumber';
+    final verseNumBuffer = StringBuffer();
 
-    const Map arabicNumbers = {
+    const arabicNumbers = {
       '0': '٠',
       '1': '١',
       '2': '٢',
@@ -267,10 +267,10 @@ class Quran {
     };
 
     for (final e in digits) {
-      arabicNumeric += arabicNumbers[e].toString();
+      verseNumBuffer.write(arabicNumbers[e]);
     }
 
-    return '\u06dd$arabicNumeric';
+    return '\u06dd$verseNumBuffer';
   }
 
   ///Takes [surahNumber] and returns the list of page numbers of the surah
