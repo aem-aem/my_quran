@@ -110,7 +110,7 @@ class SettingsBottomSheet extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'الإصدار 1.0.0',
+                'الإصدار 1.0.1',
                 style: TextStyle(
                   color: colorScheme.outline,
                   fontSize: 12,
