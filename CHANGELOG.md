@@ -1,3 +1,9 @@
+### v1.2.0
+
+- FEAT(search): improve index generation and normalization logic
+- FEAT: use glass effect for FAB
+- FEAT: increase verseEndSymbol font size
+
 ### v1.1.0
 
 - FEAT: a major redesign of the home page
