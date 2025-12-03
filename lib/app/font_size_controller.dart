@@ -18,7 +18,7 @@ class FontSizeController extends ChangeNotifier {
 
   // Relative sizes based on base font size
   double get verseFontSize => _fontSize;
-  double get verseSymbolFontSize => _fontSize + 1;
+  double get verseSymbolFontSize => _fontSize + 2;
   double get surahHeaderFontSize => _fontSize - 1;
   double get pageNumberFontSize => _fontSize + 14;
 
