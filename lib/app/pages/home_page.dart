@@ -225,25 +225,43 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       extendBodyBehindAppBar: true, // Critical for glass effect
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: colorScheme.secondaryContainer,
-        foregroundColor: colorScheme.secondary,
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          constraints: const BoxConstraints(maxHeight: 600),
-          builder: (_) => QuranNavigationBottomSheet(
-            initialPage: _currentPositionNotifier.value.pageNumber,
-            onNavigate:
-                ({required int page, required int surah, required int verse}) =>
-                    _jumpToPage(
-                      page,
-                      highlightSurah: surah,
-                      highlightVerse: verse,
-                    ),
+      floatingActionButton: ClipOval(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer.withOpacity(0.4),
+              shape: BoxShape.circle,
+            ),
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.secondary,
+              elevation: 0,
+              hoverElevation: .1,
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                constraints: const BoxConstraints(maxHeight: 600),
+                builder: (_) => QuranNavigationBottomSheet(
+                  initialPage: _currentPositionNotifier.value.pageNumber,
+                  onNavigate:
+                      ({
+                        required int page,
+                        required int surah,
+                        required int verse,
+                      }) => _jumpToPage(
+                        page,
+                        highlightSurah: surah,
+                        highlightVerse: verse,
+                      ),
+                ),
+              ),
+              child: const Icon(Icons.menu_book_outlined),
+            ),
           ),
         ),
-        child: const Icon(Icons.menu_book_outlined),
       ),
       // --- 1. The Glass App Bar ---
       appBar: AppBar(
