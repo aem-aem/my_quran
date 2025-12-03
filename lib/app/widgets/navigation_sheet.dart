@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/quran/quran.dart';
 
-class QuranNavigationBottomSheet2 extends StatefulWidget {
-  const QuranNavigationBottomSheet2({
+class QuranNavigationBottomSheet extends StatefulWidget {
+  const QuranNavigationBottomSheet({
     required this.initialPage,
     required this.onNavigate,
     super.key,
@@ -22,12 +22,12 @@ class QuranNavigationBottomSheet2 extends StatefulWidget {
   onNavigate;
 
   @override
-  State<QuranNavigationBottomSheet2> createState() =>
-      _QuranNavigationBottomSheet2State();
+  State<QuranNavigationBottomSheet> createState() =>
+      _QuranNavigationBottomSheetState();
 }
 
-class _QuranNavigationBottomSheet2State
-    extends State<QuranNavigationBottomSheet2> {
+class _QuranNavigationBottomSheetState
+    extends State<QuranNavigationBottomSheet> {
   late FixedExtentScrollController _pageController;
   late FixedExtentScrollController _surahController;
   late FixedExtentScrollController _juzController;
@@ -186,7 +186,7 @@ class _QuranNavigationBottomSheet2State
                 Center(
                   child: Container(
                     height: 44,
-                    margin: const EdgeInsets.fromLTRB(10, 26, 10, 0),
+                    margin: const EdgeInsets.only(top: 26),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHigh,
                     ),

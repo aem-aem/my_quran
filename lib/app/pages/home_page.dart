@@ -232,7 +232,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
           context: context,
           isScrollControlled: true,
           constraints: const BoxConstraints(maxHeight: 600),
-          builder: (_) => QuranNavigationBottomSheet2(
+          builder: (_) => QuranNavigationBottomSheet(
             initialPage: _currentPositionNotifier.value.pageNumber,
             onNavigate:
                 ({required int page, required int surah, required int verse}) =>

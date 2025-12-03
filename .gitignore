@@ -45,4 +45,6 @@ app.*.map.json
 /android/app/release
 android/key.properties
 android/app/*.jks
-/debug-info
+/debug-
+
+search_index_generator.dart
