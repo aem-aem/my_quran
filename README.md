@@ -1,18 +1,15 @@
-#  My Quran | قرآني
 
 <div align="center">
 
-  <!-- LOGO -->
-  <img src="fastlane/metadata/android/en-US/images/icon.png" alt="Logo" width="120" height="120" style="border-radius: 24px">
-
-  <br><br>
-
+  #  My Quran | قرآني
   <!-- BADGES -->
   ![Flutter](https://img.shields.io/badge/Built%20with-Flutter-02569B?style=flat-square&logo=flutter)
   ![License](https://img.shields.io/github/license/dmouayad/my_quran?style=flat-square&color=blue)
   ![Version](https://img.shields.io/github/v/release/dmouayad/my_quran?style=flat-square&color=0F766E&label=Latest%20Version)
+  <!-- LOGO -->
+  <img src="fastlane/metadata/android/en-US/images/icon.png" alt="Logo" width="120" height="120" style="border-radius: 24px">
 
-  <br>
+  <br><br>
 
   **A distraction-free, privacy-focused, and high-performance Quran application.**
   
@@ -22,11 +19,11 @@
 
   <!-- DOWNLOAD BUTTONS -->
   <a href="https://github.com/dmouayad/my_quran/releases/latest">
-    <img src="https://img.shields.io/badge/Download-APK-0F766E?style=for-the-badge&logo=android&logoColor=white" height="50">
+    <img src="https://img.shields.io/badge/Download-APK-0F766E?style=for-the-badge&logo=android&logoColor=white" height="230">
   </a>
   &nbsp;
   <a href="https://f-droid.org/packages/com.dmouayad.my_quran/">
-    <img src="https://img.shields.io/badge/Get%20it%20on-F--Droid-3498DB?style=for-the-badge&logo=f-droid&logoColor=white" height="50">
+    <img src="https://img.shields.io/badge/Get%20it%20on-F--Droid-3498DB?style=for-the-badge&logo=f-droid&logoColor=white" height="230">
   </a>
 
 </div>
@@ -50,15 +47,12 @@
 | **🚀 Ultra Lightweight**<br> optimized size (~17MB) using JSON assets and code splitting. | **🚀 خفيف جداً**<br> حجم صغير بفضل تقنيات ضغط البيانات، لا يستهلك مساحة الهاتف. |
 | **📴 100% Offline**<br> No internet required. No tracking. No analytics. | **📴 يعمل بدون إنترنت**<br> خصوصية تامة، لا يوجد تتبع، ولا يحتاج اتصال بالشبكة. |
 | **🔍 Smart Search**<br> Advanced search that ignores Diacritics (Tashkeel) and supports multi-word queries. | **🔍 بحث ذكي**<br> محرك بحث فوري. |
-| **📜 Seamless Reading**<br> Vertical scrolling (Mushaf style) with high-performance rendering. | **📜 قراءة انسيابية**<br> تمرير عمودي مستمر بدلاً من تقليب الصفحات لمحاكاة المصحف. |
 ---
 
 ## 🛠 Technical Highlights
 
-For developers interested in the architecture:
-
 *   **Architecture:** Pure Flutter (No heavy state management libraries), using `ValueNotifier` and `ScrollablePositionedList` for maximum performance.
-*   **Data:** The Quran text is stored as compressed JSON (`assets/quran.json`) loaded into memory via Isolates, reducing the binary size by ~40% compared to hardcoded Dart Maps.
+*   **Data:** The Quran text is stored as compressed JSON (`assets/quran.json`) loaded into memory via Isolates.
 *   **Search:** Custom-built Inverted Index with Prefix Matching and Diacritic Normalization.
 
 ## 🔧 Building from Source
@@ -86,7 +80,7 @@ To build this app locally:
 
 ## 🤝 Contributing
 
-Contributions are welcome! If you find a bug or want to improve the search algorithm:
+Contributions are welcome! If you find a bug or have any improvement.
 
 1.  Fork the Project
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
