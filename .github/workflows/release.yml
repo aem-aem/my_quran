@@ -113,13 +113,13 @@ jobs:
             # Make sure your keystore path and secret names match your repo setup
             
             "$APKSIGNER" sign \
-              --ks ${{ github.workspace }}/android/app/my-upload-key.jks \
-              --ks-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
-              --key-pass pass:${{ secrets.KEY_PASSWORD }} \
-              --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+              --ks ${{ github.workspace }}/android/app/upload-keystore.jks \
+              --ks-pass pass:${{ secrets.ANDROID_STORE_PASSWORD }} \
+              --key-pass pass:${{ secrets.ANDROID_KEY_PASSWORD }} \
+              --ks-key-alias ${{ secrets.ANDROID_KEY_ALIAS }} \
               "$apk"
               
-             # Verify it (Optional but good for logs)
+             # Verify it
              "$APKSIGNER" verify --verbose "$apk"
           done
 
