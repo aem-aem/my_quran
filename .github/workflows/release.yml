@@ -81,19 +81,46 @@ jobs:
       # --- BUILD APKs ---
       - name: Build Split APKs
         run: flutter build apk --release --split-per-abi
-
-      - name: Zipalign APKs
+      - name: Zipalign and Resign APKs
         run: |
+          # 1. Dynamically find the latest version of apksigner
+          # We look inside build-tools, sort in reverse to get the highest version, and pick the top one.
+          APKSIGNER=$(find $ANDROID_HOME/build-tools -name "apksigner" | sort -r | head -n 1)
+          
+          if [ -z "$APKSIGNER" ]; then
+            echo "Error: apksigner not found in $ANDROID_HOME/build-tools"
+            exit 1
+          fi
+          
+          echo "Using apksigner: $APKSIGNER"
+
           cd build/app/outputs/apk/release
+          
           for apk in *.apk; do
+            # --- Step A: Zipalign (Your existing logic) ---
             mv "$apk" "${apk%.apk}-unaligned.apk"
+            
             python3 ${{ github.workspace }}/reproducible-apk-tools/zipalign.py \
               --page-size 16 \
               --pad-like-apksigner \
               --replace \
               "${apk%.apk}-unaligned.apk" \
               "$apk"
+            
             rm "${apk%.apk}-unaligned.apk"
+
+            # --- Step B: Resign the APK ---
+            # Make sure your keystore path and secret names match your repo setup
+            
+            "$APKSIGNER" sign \
+              --ks ${{ github.workspace }}/android/app/my-upload-key.jks \
+              --ks-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
+              --key-pass pass:${{ secrets.KEY_PASSWORD }} \
+              --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+              "$apk"
+              
+             # Verify it (Optional but good for logs)
+             "$APKSIGNER" verify --verbose "$apk"
           done
 
       # --- PUBLISH ---

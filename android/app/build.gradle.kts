@@ -62,14 +62,10 @@ android {
 
     buildTypes {
         getByName("release") {
-            // 4. Apply Signing Config
             signingConfig = signingConfigs.getByName("release")
-            
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            
-            
         }
     }
 
