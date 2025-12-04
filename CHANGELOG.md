@@ -1,3 +1,7 @@
+### v1.2.1
+
+- build: update the release workflow to support reproducible builds on F-Droid
+
 ### v1.2.0
 
 - FEAT(search): improve index generation and normalization logic
