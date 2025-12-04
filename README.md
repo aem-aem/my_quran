@@ -1,19 +1,20 @@
-
 <div align="center">
 
-  #  My Quran | قرآني
-  <!-- BADGES -->
-  ![Flutter](https://img.shields.io/badge/Built%20with-Flutter-02569B?style=flat-square&logo=flutter)
-  ![License](https://img.shields.io/github/license/dmouayad/my_quran?style=flat-square&color=blue)
-  ![Version](https://img.shields.io/github/v/release/dmouayad/my_quran?style=flat-square&color=0F766E&label=Latest%20Version)
   <!-- LOGO -->
-  <img src="fastlane/metadata/android/en-US/images/icon.png" alt="Logo" width="120" height="120" style="border-radius: 24px">
-
-  <br><br>
+  <img src="fastlane/metadata/android/en-US/images/icon.png" alt="Logo" width="120" height="120">
+  
+  #  My Quran | قرآني
 
   **A distraction-free, privacy-focused, and high-performance Quran application.**
   
   **تطبيق قرآن كريم خفيف، مفتوح المصدر، يركز على سهولة الاستخدام والأداء العالي.**
+  <br>
+  
+  <!-- BADGES -->
+  ![Version](https://img.shields.io/github/v/release/dmouayad/my_quran?style=flat&labelColor=CCE8E4&color=0F766E&label=Latest%20Version)
+  [![Github downloads](https://img.shields.io/github/downloads/dmouayad/my_quran/total.svg?style=flat&labelColor=CCE8E4&color=0F766E)](https://github.com/dmouayad/my_quran/releases/)
+  ![Flutter](https://img.shields.io/badge/Built%20with-Flutter-0F766E?style=flat&labelColor=CCE8E4&logo=flutter&logoColor=0F766E)
+  ![License](https://img.shields.io/github/license/dmouayad/my_quran?style=flat&labelColor=CCE8E4&color=0F766E)
 
   <br>
 
@@ -23,9 +24,8 @@
   </a>
   &nbsp;
   <a href="https://f-droid.org/packages/com.dmouayad.my_quran/">
-    <img src="https://img.shields.io/badge/Get%20it%20on-F--Droid-3498DB?style=for-the-badge&logo=f-droid&logoColor=white" height="230">
+    <img src="https://img.shields.io/badge/Get%20it%20on-F--Droid-0F766E?style=for-the-badge&logo=f-droid&logoColor=white" height="230">
   </a>
-
 </div>
 
 ---
