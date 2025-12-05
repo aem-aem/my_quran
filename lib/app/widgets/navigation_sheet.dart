@@ -160,9 +160,8 @@ class _QuranNavigationBottomSheetState
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
@@ -296,11 +295,12 @@ class _QuranNavigationBottomSheetState
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: 10),
           child: Text(
             label,
             style: TextStyle(
               fontSize: 12,
+              fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),

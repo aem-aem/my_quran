@@ -225,43 +225,26 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       extendBodyBehindAppBar: true, // Critical for glass effect
-      floatingActionButton: ClipOval(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer.withOpacity(0.4),
-              shape: BoxShape.circle,
-            ),
-            child: FloatingActionButton(
-              backgroundColor: Colors.transparent,
-              foregroundColor: colorScheme.secondary,
-              elevation: 0,
-              hoverElevation: .1,
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                constraints: const BoxConstraints(maxHeight: 600),
-                builder: (_) => QuranNavigationBottomSheet(
-                  initialPage: _currentPositionNotifier.value.pageNumber,
-                  onNavigate:
-                      ({
-                        required int page,
-                        required int surah,
-                        required int verse,
-                      }) => _jumpToPage(
-                        page,
-                        highlightSurah: surah,
-                        highlightVerse: verse,
-                      ),
-                ),
-              ),
-              child: const Icon(Icons.menu_book_outlined),
-            ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: colorScheme.surfaceContainer,
+        foregroundColor: colorScheme.secondary,
+        elevation: 4,
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          constraints: const BoxConstraints(maxHeight: 600),
+          builder: (_) => QuranNavigationBottomSheet(
+            initialPage: _currentPositionNotifier.value.pageNumber,
+            onNavigate:
+                ({required int page, required int surah, required int verse}) =>
+                    _jumpToPage(
+                      page,
+                      highlightSurah: surah,
+                      highlightVerse: verse,
+                    ),
           ),
         ),
+        child: Icon(Icons.menu_book_outlined, color: colorScheme.primary),
       ),
       // --- 1. The Glass App Bar ---
       appBar: AppBar(
@@ -777,7 +760,7 @@ class _SurahTextBlockState extends State<_SurahTextBlock> {
     final highlightedTextStyle = TextStyle(
       backgroundColor: isDarkMode
           ? Theme.of(context).colorScheme.surfaceBright
-          : Theme.of(context).colorScheme.surfaceContainer,
+          : Theme.of(context).colorScheme.surfaceContainerHigh,
     );
     for (final verse in widget.surah.verses) {
       // 1. Text
