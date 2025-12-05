@@ -13,13 +13,12 @@
 
   A distraction-free, privacy-focused, and high-performance Quran application.
   <br><br>
+  
   <!-- DOWNLOAD BUTTONS -->
   <div align="center">
-
   [<img src="assets/readme_assets/get_iod.svg" alt="Get it on IzzyOnDroid" width="24%" align="center">](https://apt.izzysoft.de/fdroid/index/apk/com.dmouayad.my_quran)
-  <!-- [<img src="assets/readme_assets/get_fdroid.svg" alt="Get it on F-Droid" width="24%" align="center">](https://f-droid.org/packages/com.dmouayad.my_quran) -->
+  [<img src="assets/readme_assets/get_fdroid.svg" alt="Get it on F-Droid" width="24%" align="center">](https://f-droid.org/packages/com.dmouayad.my_quran)
   [<img src="assets/readme_assets/get_github.svg" alt="Get it on GitHub" width="24%" align="center">](https://github.com/dmouayad/my_quran/releases)
-
   </div>
 </div>
 
@@ -28,9 +27,9 @@
 ## 📱 Screenshots / لقطات الشاشة
 
 <div align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/home-light.png" width="200" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/search.png" width="200" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/navigation.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/0-home-light.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3-search.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2-navigation.png" width="200" />
 </div>
 
 ---
