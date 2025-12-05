@@ -200,7 +200,7 @@ class _BookmarkCard extends StatelessWidget {
                 style: const TextStyle(fontSize: 18, height: 1.8),
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.justify,
-                maxLines: 3,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
 
