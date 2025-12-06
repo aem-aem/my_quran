@@ -672,11 +672,12 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
             style: TextStyle(
               fontSize: surahHeaderFontSize,
               height: 1.5,
+              letterSpacing: 0,
               color: colorScheme.onSecondaryContainer,
             ),
           ),
           Text(
-            'آياتها\n (${_getArabicNumber(surah.verses.length)})',
+            'آياتها\n (${_getArabicNumber(Quran.instance.getVerseCount(surah.surahNumber))})',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: FontFamily.arabicNumbersFontFamily.name,
