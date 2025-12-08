@@ -55,7 +55,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version-file: .flutter-version
+          flutter-version-file: pubspec.yaml
           cache: true
 
       - name: Flutter Doctor
@@ -97,7 +97,7 @@ jobs:
           cd build/app/outputs/apk/release
           
           for apk in *.apk; do
-            # --- Step A: Zipalign (Your existing logic) ---
+            # --- Step A: Zipalign ---
             mv "$apk" "${apk%.apk}-unaligned.apk"
             
             python3 ${{ github.workspace }}/reproducible-apk-tools/zipalign.py \
