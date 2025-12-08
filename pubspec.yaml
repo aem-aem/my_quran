@@ -17,9 +17,9 @@ dependencies:
   shared_preferences: ^2.5.3
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   very_good_analysis: ^10.0.0
 
 
@@ -29,7 +29,6 @@ flutter:
   uses-material-design: true
 
   assets:
-      - assets/
       - assets/fonts/
       - assets/quran.json
       - assets/search_index.json
