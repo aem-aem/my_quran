@@ -292,10 +292,49 @@ class _HighlightedText extends StatelessWidget {
     // Tokenize the verse text (keep punctuation for display)
     // We split by space to process word by word
     final List<String> verseWords = text.split(' ');
+    // 1. Find the index of the first match
+    int firstMatchIndex = -1;
+
+    for (int i = 0; i < verseWords.length; i++) {
+      final cleanWord = ArabicTextProcessor.normalize(verseWords[i]);
+      bool isMatch = false;
+
+      if (highlightExactMatchOnly) {
+        isMatch = queryTokens.contains(cleanWord);
+      } else {
+        for (final q in queryTokens) {
+          if (cleanWord.startsWith(q)) {
+            isMatch = true;
+            break;
+          }
+        }
+      }
+
+      if (isMatch) {
+        firstMatchIndex = i;
+        break;
+      }
+    }
+
+    // 2. Calculate Start Index for display
+    // If match is far (index > 10), start 3 words before it.
+    // Otherwise start from 0.
+    int startIndex = 0;
+    bool showStartEllipsis = false;
+
+    if (firstMatchIndex > 10) {
+      startIndex = firstMatchIndex - 3;
+      showStartEllipsis = true;
+    }
+
+    // 3. Slice the list
+    // We take from startIndex to the end.
+    // TextOverflow.ellipsis handles the end cutoff.
+    final displayWords = verseWords.sublist(startIndex);
 
     return RichText(
       textDirection: TextDirection.rtl,
-      maxLines: 2, // Compact view
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         style: TextStyle(
@@ -304,36 +343,40 @@ class _HighlightedText extends StatelessWidget {
           height: 1.8,
           fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
         ),
-        children: verseWords.map((word) {
-          // Normalize the word from the verse to check against query
-          // We must strip diacritics/symbols to compare,
-          // but we DISPLAY the original 'word'
-          final cleanWord = ArabicTextProcessor.normalize(word);
+        children: [
+          // Add ellipsis at start if we skipped words
+          if (showStartEllipsis)
+            TextSpan(
+              text: '... ',
+              style: TextStyle(color: baseColor.withOpacity(0.8)),
+            ),
 
-          bool isMatch = false;
+          ...displayWords.map((word) {
+            final cleanWord = ArabicTextProcessor.normalize(word);
+            bool isMatch = false;
 
-          if (highlightExactMatchOnly) {
-            isMatch = queryTokens.contains(cleanWord);
-          } else {
-            for (final q in queryTokens) {
-              if (cleanWord.startsWith(q)) {
-                isMatch = true;
-                break;
+            if (highlightExactMatchOnly) {
+              isMatch = queryTokens.contains(cleanWord);
+            } else {
+              for (final q in queryTokens) {
+                if (cleanWord.startsWith(q)) {
+                  isMatch = true;
+                  break;
+                }
               }
             }
-          }
 
-          return TextSpan(
-            text: '$word ', // Add space back
-            style: isMatch
-                ? TextStyle(
-                    backgroundColor: colorScheme.primaryContainer,
-                    color: colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                  )
-                : null,
-          );
-        }).toList(),
+            return TextSpan(
+              text: '$word ',
+              style: isMatch
+                  ? TextStyle(
+                      backgroundColor: colorScheme.primaryContainer,
+                      color: colorScheme.onPrimaryContainer,
+                    )
+                  : null,
+            );
+          }),
+        ],
       ),
     );
   }
