@@ -1,3 +1,11 @@
+### v1.2.4
+
+FIX: search, text sizer and navigation sheets are covered by on-screen navigation buttons
+FEAT: add exact match search
+FEAT: In search result card, implement text truncation for long verses to ensure the matching word is visible
+REFACTOR: minify quran text json file
+FEAT: reduce size of search index by removing duplications(word with diacritics)
+
 ### v1.2.3
 
 - FIX: reproducible build is failing due to Flutter SDK mismatch
