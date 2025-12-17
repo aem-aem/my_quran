@@ -1,7 +1,10 @@
 class ArabicTextProcessor {
   // Remove diacritics (tashkeel)
   static String removeDiacritics(String text) {
-    return text.replaceAll(RegExp(r'[\u064B-\u065F\u0670]'), '');
+    return text.replaceAll(
+      RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'),
+      '',
+    );
   }
 
   // Normalize Arabic characters
