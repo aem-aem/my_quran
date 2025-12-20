@@ -323,7 +323,16 @@ class _QuranNavigationBottomSheetState
             childDelegate: ListWheelChildBuilderDelegate(
               builder: (context, index) {
                 if (index < 0 || index >= count) return null;
-                return itemBuilder(index);
+                return GestureDetector(
+                  onTap: () {
+                    controller.animateToItem(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: itemBuilder(index),
+                );
               },
               childCount: count,
             ),
