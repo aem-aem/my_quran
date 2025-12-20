@@ -6,6 +6,7 @@ import 'package:my_quran/app/utils.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import 'package:my_quran/app/settings_controller.dart';
 import 'package:my_quran/app/font_size_controller.dart';
 import 'package:my_quran/app/services/reading_position_service.dart';
 import 'package:my_quran/app/models.dart';
@@ -18,19 +19,13 @@ import 'package:my_quran/quran/quran.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
-    required this.onThemeToggle,
-    required this.onFontFamilyChange,
-    required this.fontFamily,
-    required this.themeMode,
+    required this.settingsController,
     this.initialPosition,
     super.key,
   });
 
-  final VoidCallback onThemeToggle;
-  final ValueChanged<FontFamily> onFontFamilyChange;
   final ReadingPosition? initialPosition;
-  final ThemeMode themeMode;
-  final FontFamily fontFamily;
+  final SettingsController settingsController;
 
   @override
   HomePageState createState() => HomePageState();
@@ -148,7 +143,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     double alignment = 0;
 
     if (highlightSurah != null && highlightVerse != null) {
-      // Get data for this page to find where our verse is located relative to others
+      // Get data for this page to find where our verse is located
       final pageData = Quran.instance.getPageData(pageNumber);
 
       int totalVersesOnPage = 0;
@@ -300,6 +295,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 style: TextStyle(
                   fontSize: 18,
                   color: context.colorScheme.secondary,
+                  fontFamily: FontFamily.rustam.name,
                 ),
               ),
             ),
@@ -315,12 +311,13 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         actions: [
           IconButton(
-            onPressed: () => MinimalFontSizeControl.show(context),
+            onPressed: () =>
+                FontSettingsSheet.show(context, widget.settingsController),
             icon: const Icon(Icons.format_size_outlined),
           ),
           IconButton(
-            onPressed: widget.onThemeToggle,
-            icon: Icon(switch (widget.themeMode) {
+            onPressed: widget.settingsController.toggleTheme,
+            icon: Icon(switch (widget.settingsController.themeMode) {
               ThemeMode.dark => Icons.dark_mode_outlined,
               ThemeMode.light => Icons.light_mode_outlined,
               ThemeMode.system => Icons.brightness_auto_outlined,
@@ -348,6 +345,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   key: ValueKey(index + 1),
                   highlightedVerse: _highlightedVerse,
                   onVerseTap: _onVerseTapped,
+                  settingsController: widget.settingsController,
                 ),
               ),
             ),
@@ -429,6 +427,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 class QuranPageWidget extends StatefulWidget {
   const QuranPageWidget({
     required this.pageNumber,
+    required this.settingsController,
     this.highlightedVerse,
     this.onVerseTap,
     super.key,
@@ -437,13 +436,14 @@ class QuranPageWidget extends StatefulWidget {
   final int pageNumber;
   final ({int surah, int verse})? highlightedVerse;
   final void Function(int surah, int verse)? onVerseTap;
+  final SettingsController settingsController;
 
   @override
   State<QuranPageWidget> createState() => _QuranPageWidgetState();
 }
 
 class _QuranPageWidgetState extends State<QuranPageWidget> {
-  late final QuranPage pageDataModel;
+  late QuranPage pageDataModel;
   final FontSizeController _fontSizeController = FontSizeController();
   final GlobalKey _richTextKey = GlobalKey(); // Key to access the text renderer
 
@@ -460,13 +460,21 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
     super.initState();
     _loadPageData();
     _fontSizeController.addListener(_rebuild);
+    Quran.data.addListener(_onQuranDataChanged);
   }
 
   @override
   void dispose() {
     _fontSizeController.removeListener(_rebuild);
     _removeOverlay();
+    Quran.data.removeListener(_onQuranDataChanged);
     super.dispose();
+  }
+
+  void _onQuranDataChanged() {
+    if (mounted) {
+      setState(_loadPageData);
+    }
   }
 
   @override
@@ -594,7 +602,6 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
       onTapUp: (details) => _handleGlobalTap(details.localPosition),
       onLongPressStart: (details) =>
           _handleGlobalTap(details.localPosition, isLongPress: true),
-
       child: Container(
         color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -641,6 +648,7 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
           symbolSize: symbolSize,
           highlightedVerse: widget.highlightedVerse,
           onInteraction: _onVerseInteraction,
+          settingsController: widget.settingsController,
         );
       },
     );
@@ -658,34 +666,51 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
         color: colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(2),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Text(
-            'ترتيبها\n (${getArabicNumber(surah.surahNumber)})',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: FontFamily.arabicNumbersFontFamily.name,
+
+      child: DefaultTextStyle(
+        style: TextStyle(
+          color: colorScheme.onSecondaryContainer,
+          fontWeight: FontWeight.w500,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              children: [
+                const Text('ترتيبها'),
+                Text(
+                  '(${getArabicNumber(surah.surahNumber)})',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: FontFamily.arabicNumbersFontFamily.name,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text(
-            'سورة ${Quran.instance.getSurahNameArabic(surah.surahNumber)}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: surahHeaderFontSize,
-              height: 1.5,
-              letterSpacing: 0,
-              color: colorScheme.onSecondaryContainer,
+            Text(
+              'سورة ${Quran.instance.getSurahNameArabic(surah.surahNumber)}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: surahHeaderFontSize,
+                height: 1.2,
+                letterSpacing: 0,
+                fontFamily: FontFamily.rustam.name,
+              ),
             ),
-          ),
-          Text(
-            'آياتها\n (${getArabicNumber(Quran.instance.getVerseCount(surah.surahNumber))})',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: FontFamily.arabicNumbersFontFamily.name,
+            Column(
+              children: [
+                const Text('آياتها'),
+                Text(
+                  '(${getArabicNumber(Quran.instance.getVerseCount(surah.surahNumber))})',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: FontFamily.arabicNumbersFontFamily.name,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -697,12 +722,13 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
       padding: const EdgeInsets.only(bottom: 24),
       child: Text(
         Quran.basmala,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: fontSize,
+          fontFamily: FontFamily.rustam.name,
           letterSpacing: 0,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w300,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }
@@ -716,12 +742,14 @@ class _SurahTextBlock extends StatefulWidget {
     required this.symbolSize,
     required this.highlightedVerse,
     required this.onInteraction,
+    required this.settingsController,
   });
   final SurahInPage surah;
   final double fontSize;
   final double symbolSize;
   final ({int surah, int verse})? highlightedVerse;
   final void Function(int s, int v, {required bool isLongPress}) onInteraction;
+  final SettingsController settingsController;
 
   @override
   State<_SurahTextBlock> createState() => _SurahTextBlockState();
@@ -769,6 +797,7 @@ class _SurahTextBlockState extends State<_SurahTextBlock> {
     final isDarkMode = Theme.brightnessOf(context) == Brightness.dark;
     int charCount = 0;
     final spans = <InlineSpan>[];
+
     final highlightedTextStyle = TextStyle(
       backgroundColor: isDarkMode
           ? Theme.of(context).colorScheme.surfaceContainerHigh

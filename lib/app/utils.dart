@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_quran/app/models.dart';
 
 String getArabicNumber(int number) {
   const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -13,4 +14,7 @@ extension ThemeContext on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   TextTheme get textTheme => Theme.of(this).textTheme;
   String? get fontFamily => textTheme.bodyLarge?.fontFamily;
+
+  bool get isHafsFontFamily => fontFamily == FontFamily.hafs.name;
+  bool get isRustamFontFamily => fontFamily == FontFamily.rustam.name;
 }

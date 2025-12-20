@@ -10,8 +10,8 @@ class FontSizeController extends ChangeNotifier {
 
   static const String _fontSizeKey = 'quran_font_size';
   static const double _defaultFontSize = 24;
-  static const double _minFontSize = 16;
-  static const double _maxFontSize = 40;
+  static const double minFontSize = 16;
+  static const double maxFontSize = 50;
 
   double _fontSize = _defaultFontSize;
   double get fontSize => _fontSize;
@@ -19,7 +19,7 @@ class FontSizeController extends ChangeNotifier {
   // Relative sizes based on base font size
   double get verseFontSize => _fontSize;
   double get verseSymbolFontSize => _fontSize + 2;
-  double get surahHeaderFontSize => _fontSize - 1;
+  double get surahHeaderFontSize => _fontSize - 3;
   double get pageNumberFontSize => _fontSize + 14;
 
   final _prefs = SharedPreferencesAsync();
@@ -31,7 +31,7 @@ class FontSizeController extends ChangeNotifier {
   }
 
   Future<void> setFontSize(double size) async {
-    final clampedSize = size.clamp(_minFontSize, _maxFontSize);
+    final clampedSize = size.clamp(minFontSize, maxFontSize);
     if (_fontSize != clampedSize) {
       _fontSize = clampedSize;
       notifyListeners();
@@ -41,11 +41,11 @@ class FontSizeController extends ChangeNotifier {
     }
   }
 
-  void increaseFontSize([double step = 2.0]) {
+  void increaseFontSize([double step = 1.0]) {
     setFontSize(_fontSize + step);
   }
 
-  void decreaseFontSize([double step = 2.0]) {
+  void decreaseFontSize([double step = 1.0]) {
     setFontSize(_fontSize - step);
   }
 
@@ -53,10 +53,10 @@ class FontSizeController extends ChangeNotifier {
     await setFontSize(_defaultFontSize);
   }
 
-  bool get isAtMin => _fontSize <= _minFontSize;
-  bool get isAtMax => _fontSize >= _maxFontSize;
+  bool get isAtMin => _fontSize <= minFontSize;
+  bool get isAtMax => _fontSize >= maxFontSize;
   bool get isDefault => _fontSize == _defaultFontSize;
 
   double get progress =>
-      (_fontSize - _minFontSize) / (_maxFontSize - _minFontSize);
+      (_fontSize - minFontSize) / (maxFontSize - minFontSize);
 }

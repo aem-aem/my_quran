@@ -270,7 +270,9 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
       }
     } else {
       final bookmark = VerseBookmark(
-        id: '${widget.surah}_${verseNum}_${DateTime.now().millisecondsSinceEpoch}',
+        id:
+            '${widget.surah}_${verseNum}_'
+            '${DateTime.now().millisecondsSinceEpoch}',
         surah: widget.surah,
         verse: verseNum,
         pageNumber: Quran.instance.getPageNumber(widget.surah, verseNum),

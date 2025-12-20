@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show FontWeight;
 
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:my_quran/app/models.dart';
@@ -44,5 +45,17 @@ class SettingsService {
   Future<ThemeMode> loadTheme() async {
     final themeIndex = await _prefs.getInt('theme') ?? 0;
     return ThemeMode.values[themeIndex];
+  }
+
+  Future<void> setFontWeight(FontWeight fontWeight) async {
+    await _prefs.setInt('fontWeight', fontWeight.index);
+  }
+
+  Future<FontWeight> loadFontWeight() async {
+    final index = await _prefs.getInt('fontWeight');
+    if (index != null && index >= 0 && index < FontWeight.values.length) {
+      return FontWeight.values[index];
+    }
+    return FontWeight.w500;
   }
 }
