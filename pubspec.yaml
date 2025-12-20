@@ -31,6 +31,7 @@ flutter:
   assets:
       - assets/fonts/
       - assets/quran.json
+      - assets/kfgqpc_hafs.json
       - assets/search_index.json
 
   fonts:
@@ -40,3 +41,6 @@ flutter:
     - family: Rustam
       fonts: 
         - asset: assets/fonts/rustam_quranR3HOQ.ttf
+    - family: Hafs
+      fonts:
+        - asset: assets/fonts/HafsSmart.ttf

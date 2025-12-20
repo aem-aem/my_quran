@@ -1,7 +1,11 @@
+import 'dart:ui' show FontWeight;
+
 import 'package:flutter/foundation.dart' show ChangeNotifier, debugPrint;
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/services/settings_service.dart';
+
+import 'package:my_quran/quran/quran.dart';
 
 class SettingsController extends ChangeNotifier {
   SettingsController({required this.settingsService});
@@ -10,6 +14,7 @@ class SettingsController extends ChangeNotifier {
 
   String _language = 'ar';
   FontFamily _fontFamily = FontFamily.rustam;
+  FontWeight _fontWeight = FontWeight.w500;
   ThemeMode _theme = ThemeMode.system;
 
   String get language => _language;
@@ -24,6 +29,17 @@ class SettingsController extends ChangeNotifier {
     _fontFamily = value;
     notifyListeners();
     settingsService.setFontFamily(value);
+    Quran.useDatasourceForFont(value);
+  }
+
+  FontWeight get fontWeight => _fontWeight;
+  FontWeight get fontWeightForCurrentFamily =>
+      fontFamily == FontFamily.rustam ? FontWeight.w500 : _fontWeight;
+
+  set fontWeight(FontWeight value) {
+    _fontWeight = value;
+    notifyListeners();
+    settingsService.setFontWeight(value);
   }
 
   ThemeMode get themeMode => _theme;
@@ -43,8 +59,12 @@ class SettingsController extends ChangeNotifier {
 
   Future<void> init() async {
     _theme = await settingsService.loadTheme();
+    _fontFamily = await settingsService.loadFontFamily();
+    _fontWeight = await settingsService.loadFontWeight();
     debugPrint('✅ Loaded settings');
     debugPrint('📏 Theme: $_theme');
+    debugPrint('📏 Font Family: ${_fontFamily.name}');
+    debugPrint('📏 Font Weight: ${_fontWeight.value}');
     notifyListeners();
   }
 }

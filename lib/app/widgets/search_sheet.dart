@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:my_quran/app/models.dart';
 
 import 'package:my_quran/app/search/processor.dart';
 import 'package:my_quran/quran/quran.dart';
@@ -114,13 +115,15 @@ class _QuranSearchBottomSheetState extends State<QuranSearchBottomSheet> {
                 ),
 
                 if (_results.isNotEmpty) ...[
-                  const Spacer(),
-                  Text(
-                    'عدد النتائج: ${_results.length}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurfaceVariant,
+                  Expanded(
+                    child: Text(
+                      'عدد النتائج: ${_results.length}',
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ],
@@ -206,8 +209,11 @@ class SearchResultItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // 1. Get the full verse text
-    final String fullText = Quran.instance.getVerse(result.surah, result.verse);
+    // 1. Get the full verse text (Force plain text for search results)
+    final String fullText = Quran.getVerseInPlainText(
+      result.surah,
+      result.verse,
+    );
 
     return InkWell(
       onTap: onTap,
@@ -232,17 +238,13 @@ class SearchResultItem extends StatelessWidget {
                     '${Quran.instance.getSurahNameArabic(result.surah)} - '
                     '${result.verse}',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  'آية- ${result.verse} ',
-                  style: TextStyle(fontSize: 14, color: colorScheme.primary),
-                ),
+
                 const Spacer(),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
@@ -289,14 +291,13 @@ class _HighlightedText extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Tokenize the verse text (keep punctuation for display)
-    // We split by space to process word by word
-    final List<String> verseWords = text.split(' ');
+    final List<String> words = text.trim().split(RegExp(r'\s+'));
+
     // 1. Find the index of the first match
     int firstMatchIndex = -1;
 
-    for (int i = 0; i < verseWords.length; i++) {
-      final cleanWord = ArabicTextProcessor.normalize(verseWords[i]);
+    for (int i = 0; i < words.length; i++) {
+      final cleanWord = ArabicTextProcessor.normalize(words[i]);
       bool isMatch = false;
 
       if (highlightExactMatchOnly) {
@@ -317,8 +318,6 @@ class _HighlightedText extends StatelessWidget {
     }
 
     // 2. Calculate Start Index for display
-    // If match is far (index > 10), start 3 words before it.
-    // Otherwise start from 0.
     int startIndex = 0;
     bool showStartEllipsis = false;
 
@@ -328,9 +327,7 @@ class _HighlightedText extends StatelessWidget {
     }
 
     // 3. Slice the list
-    // We take from startIndex to the end.
-    // TextOverflow.ellipsis handles the end cutoff.
-    final displayWords = verseWords.sublist(startIndex);
+    final displayWords = words.sublist(startIndex);
 
     return RichText(
       textDirection: TextDirection.rtl,
@@ -338,21 +335,21 @@ class _HighlightedText extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           color: baseColor,
           height: 1.8,
-          fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
+          fontFamily: FontFamily.rustam.name,
         ),
         children: [
-          // Add ellipsis at start if we skipped words
           if (showStartEllipsis)
             TextSpan(
               text: '... ',
               style: TextStyle(color: baseColor.withOpacity(0.8)),
             ),
-
-          ...displayWords.map((word) {
+          ...List.generate(displayWords.length, (index) {
+            final word = displayWords[index];
             final cleanWord = ArabicTextProcessor.normalize(word);
+
             bool isMatch = false;
 
             if (highlightExactMatchOnly) {
@@ -370,8 +367,8 @@ class _HighlightedText extends StatelessWidget {
               text: '$word ',
               style: isMatch
                   ? TextStyle(
-                      backgroundColor: colorScheme.primaryContainer,
-                      color: colorScheme.onPrimaryContainer,
+                      backgroundColor: colorScheme.primary,
+                      color: colorScheme.onPrimary,
                     )
                   : null,
             );

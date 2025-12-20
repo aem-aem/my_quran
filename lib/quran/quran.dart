@@ -1,10 +1,12 @@
 // ignore_for_file: only_throw_errors (), avoid_dynamic_calls,
 // ignore_for_file: argument_type_not_assignable ()
 
+import 'dart:async';
 import 'dart:convert' show json;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:my_quran/app/models.dart';
 
 import 'package:my_quran/quran/data/juz_data.dart';
 import 'package:my_quran/quran/data/page_data.dart';
@@ -15,16 +17,45 @@ class Quran {
   Quran._();
   static final instance = Quran._();
 
-  static Map<String, dynamic> _data = {};
+  static final data = ValueNotifier<Map<String, dynamic>>({});
+  static late final Map<String, dynamic> _plainTextData;
 
-  static Future<void> initialize() async {
+  static const String _medinaPath = 'assets/quran.json';
+  static const String _hafsPath = 'assets/kfgqpc_hafs.json';
+
+  static Future<Map<String, dynamic>?> _getQuranData(
+    FontFamily fontFamily,
+  ) async {
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/quran.json',
-      );
-      _data = json.decode(jsonString) as Map<String, dynamic>;
+      final path = fontFamily == FontFamily.rustam ? _medinaPath : _hafsPath;
+      final String jsonString = await rootBundle.loadString(path);
+      return json.decode(jsonString) as Map<String, dynamic>;
     } catch (e) {
       debugPrint('Error loading Quran JSON: $e');
+      return null;
+    }
+  }
+
+  static Future<void> initialize({FontFamily? fontFamily}) async {
+    if (await _getQuranData(fontFamily ?? FontFamily.defaultFontFamily)
+        case final Map<String, dynamic> quranData) {
+      data.value = quranData;
+      if (fontFamily == FontFamily.rustam) {
+        _plainTextData = quranData;
+      } else {
+        unawaited(
+          _getQuranData(FontFamily.rustam).then((v) {
+            _plainTextData = v ?? {};
+          }),
+        );
+      }
+    }
+  }
+
+  static Future<void> useDatasourceForFont(FontFamily fontFamily) async {
+    if (await _getQuranData(fontFamily)
+        case final Map<String, dynamic> quranData) {
+      data.value = quranData;
     }
   }
 
@@ -192,13 +223,14 @@ class Quran {
     return int.parse(surah[surahNumber - 1]['aya'].toString());
   }
 
-  ///Takes [surahNumber], [verseNumber] & [verseEndSymbol] (optional) and returns the Verse in Arabic
+  ///Takes [surahNumber], [verseNumber] & [verseEndSymbol] (optional) and
+  /// returns the Verse in Arabic
   String getVerse(
     int surahNumber,
     int verseNumber, {
     bool verseEndSymbol = false,
   }) {
-    final verse = _data[surahNumber.toString()]?[verseNumber.toString()]
+    final verse = data.value[surahNumber.toString()]?[verseNumber.toString()]
         .toString();
 
     if (verse == null) {
@@ -206,6 +238,12 @@ class Quran {
     }
 
     return verse + (verseEndSymbol ? getVerseEndSymbol(verseNumber) : '');
+  }
+
+  static String getVerseInPlainText(int surahNumber, int verseNumber) {
+    return _plainTextData[surahNumber.toString()]?[verseNumber.toString()]
+            ?.toString() ??
+        '';
   }
 
   ///Takes [juzNumber] and returns Juz URL (from Quran.com)

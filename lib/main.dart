@@ -18,16 +18,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize search index in background
   unawaited(SearchService.init());
-  await Quran.initialize();
+
+  final settingsController = SettingsController(
+    settingsService: SettingsService(),
+  );
+  await settingsController.init();
+  await Quran.initialize(fontFamily: settingsController.fontFamily);
   await BookmarkService().initialize();
   await FontSizeController().initialize();
 
   final lastPosition = await ReadingPositionService.loadPosition();
   debugPrint('📱 Last Position: $lastPosition');
-  final settingsController = SettingsController(
-    settingsService: SettingsService(),
-  );
-  await settingsController.init();
 
   // FORCE TRANSPARENT STATUS BAR
   SystemChrome.setSystemUIOverlayStyle(
@@ -72,11 +73,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: seedColor),
           ),
           home: HomePage(
-            fontFamily: settingsController.fontFamily,
-            themeMode: settingsController.themeMode,
             initialPosition: lastPosition,
-            onFontFamilyChange: (v) => settingsController.fontFamily = v,
-            onThemeToggle: settingsController.toggleTheme,
+            settingsController: settingsController,
           ),
         );
       },
