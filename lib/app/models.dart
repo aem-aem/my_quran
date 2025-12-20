@@ -88,7 +88,6 @@ class VerseBookmark {
     required this.surah,
     required this.verse,
     required this.pageNumber,
-    required this.verseText,
     required this.createdAt,
     this.note,
   });
@@ -98,7 +97,6 @@ class VerseBookmark {
     surah: json['surah'] as int,
     verse: json['verse'] as int,
     pageNumber: json['pageNumber'] as int,
-    verseText: json['verseText'] as String,
     createdAt: DateTime.parse(json['createdAt'] as String),
     note: json['note'] as String?,
   );
@@ -106,7 +104,6 @@ class VerseBookmark {
   final int surah;
   final int verse;
   final int pageNumber;
-  final String verseText;
   final DateTime createdAt;
   final String? note;
 
@@ -115,7 +112,6 @@ class VerseBookmark {
     'surah': surah,
     'verse': verse,
     'pageNumber': pageNumber,
-    'verseText': verseText,
     'createdAt': createdAt.toIso8601String(),
     'note': note,
   };

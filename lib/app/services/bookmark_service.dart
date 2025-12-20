@@ -86,7 +86,6 @@ class BookmarkService {
         surah: bookmark.surah,
         verse: bookmark.verse,
         pageNumber: bookmark.pageNumber,
-        verseText: bookmark.verseText,
         createdAt: bookmark.createdAt,
         note: note,
       );

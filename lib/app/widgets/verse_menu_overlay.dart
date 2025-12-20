@@ -276,7 +276,6 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
         surah: widget.surah,
         verse: verseNum,
         pageNumber: Quran.instance.getPageNumber(widget.surah, verseNum),
-        verseText: widget.verse.text,
         createdAt: DateTime.now(),
       );
       await bookmarkService.addBookmark(bookmark);

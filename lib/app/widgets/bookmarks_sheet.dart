@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/services/bookmark_service.dart';
+import 'package:my_quran/app/utils.dart';
 import 'package:my_quran/quran/quran.dart';
 
 class BookmarksSheet extends StatefulWidget {
@@ -165,9 +166,14 @@ class _BookmarkCard extends StatelessWidget {
             children: [
               // Header
               Row(
-                spacing: 10,
                 children: [
-                  // Icon(Icons.bookmark, color: colorScheme.primary, size: 20),
+                  const Text('ص '),
+                  Text(
+                    '${getArabicNumber(bookmark.pageNumber)} - ',
+                    style: TextStyle(
+                      fontFamily: FontFamily.arabicNumbersFontFamily.name,
+                    ),
+                  ),
                   Text(
                     Quran.instance.getSurahNameArabic(bookmark.surah),
                     style: const TextStyle(
@@ -176,12 +182,10 @@ class _BookmarkCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'ص ${_toArabicNumber(bookmark.pageNumber)}',
+                    ' (${getArabicNumber(bookmark.verse)})',
                     style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: FontFamily.defaultFontFamily.name,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSecondaryContainer,
+                      fontFamily: FontFamily.arabicNumbersFontFamily.name,
+                      fontSize: 16,
                     ),
                   ),
                   const Spacer(),
@@ -194,12 +198,11 @@ class _BookmarkCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 12),
-
               // Verse text
               Text(
-                bookmark.verseText,
-                style: const TextStyle(fontSize: 18, height: 1.8),
+                Quran.instance.getVerse(bookmark.surah, bookmark.verse),
+
+                style: const TextStyle(fontSize: 20, height: 1.8),
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.justify,
                 maxLines: 1,
@@ -236,7 +239,7 @@ class _BookmarkCard extends StatelessWidget {
                 ),
               ],
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
 
               // Actions
               Row(
@@ -276,14 +279,5 @@ class _BookmarkCard extends StatelessWidget {
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
-  }
-
-  String _toArabicNumber(int number) {
-    const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return number
-        .toString()
-        .split('')
-        .map((digit) => arabicNumerals[int.parse(digit)])
-        .join();
   }
 }
