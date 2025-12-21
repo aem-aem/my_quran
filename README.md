@@ -26,9 +26,9 @@
 ## 📱 Screenshots / لقطات الشاشة
 
 <div align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/0-home-light.png" width="200" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3-search.png" width="200" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2-navigation.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/0-light-hafs.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2-dark.png" width="200" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4-quick-navigation.png" width="200" />
 </div>
 
 ## ✨ Features | المميزات
