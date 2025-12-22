@@ -807,6 +807,7 @@ class _SurahTextBlockState extends State<_SurahTextBlock> {
             fontSize: widget.fontSize,
             fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
             color: Theme.of(context).textTheme.bodyLarge?.color,
+            fontWeight: widget.settingsController.fontWeight,
           ),
           children: spans,
         ),
