@@ -41,18 +41,4 @@ class ArabicTextProcessor {
         .where((word) => word.isNotEmpty)
         .toList();
   }
-
-  // Get root variations for better search (optional - advanced)
-  static List<String> getVariations(String word) {
-    final variations = <String>[word];
-
-    // Add version with/without ال (the definite article)
-    if (word.startsWith('ال') && word.length > 2) {
-      variations.add(word.substring(2));
-    } else {
-      variations.add('ال$word');
-    }
-
-    return variations;
-  }
 }
