@@ -96,6 +96,25 @@ class PinnedHeader extends StatelessWidget {
   }
 
   void onJuzTapped(BuildContext context) {
+    int? juz;
+    void validateAndGo(int? juz) {
+      if (juz is! int || juz < 1 || juz > 30) {
+        return;
+      }
+      final firstSurahOfJuz = Quran.instance
+          .getSurahAndVersesFromJuz(juz)
+          .entries
+          .first;
+      final surahNumber = firstSurahOfJuz.key;
+      final verseNumber = firstSurahOfJuz.value.first;
+      Navigator.pop(context);
+      goToPage(
+        Quran.instance.getPageNumber(surahNumber, verseNumber),
+        highlightSurah: surahNumber,
+        highlightVerse: verseNumber,
+      );
+    }
+
     showAdaptiveDialog(
       context: context,
       builder: (context) => SimpleDialog(
@@ -115,24 +134,15 @@ class PinnedHeader extends StatelessWidget {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 18),
+            onChanged: (value) => juz = int.tryParse(value),
             onSubmitted: (value) {
-              final juz = int.tryParse(value);
-              if (juz is! int || juz < 1 || juz > 30) {
-                return;
-              }
-              final firstSurahOfJuz = Quran.instance
-                  .getSurahAndVersesFromJuz(juz)
-                  .entries
-                  .first;
-              final surahNumber = firstSurahOfJuz.key;
-              final verseNumber = firstSurahOfJuz.value.first;
-              Navigator.pop(context);
-              goToPage(
-                Quran.instance.getPageNumber(surahNumber, verseNumber),
-                highlightSurah: surahNumber,
-                highlightVerse: verseNumber,
-              );
+              validateAndGo(int.tryParse(value));
             },
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: () => validateAndGo(juz),
+            child: const Text('انتقال'),
           ),
         ],
       ),
@@ -140,6 +150,17 @@ class PinnedHeader extends StatelessWidget {
   }
 
   void onPageNumberTapped(BuildContext context) {
+    int? page;
+    void validateAndGo() {
+      if (page == null) return;
+      if (page is! int || page! < 1 || page! > Quran.totalPagesCount) {
+        return;
+      }
+
+      Navigator.pop(context);
+      goToPage(page!);
+    }
+
     showAdaptiveDialog(
       context: context,
       builder: (context) => SimpleDialog(
@@ -163,17 +184,11 @@ class PinnedHeader extends StatelessWidget {
               }
               return null;
             },
-
-            onFieldSubmitted: (value) {
-              final page = int.tryParse(value);
-              if (page is! int || page < 1 || page > Quran.totalPagesCount) {
-                return;
-              }
-
-              Navigator.pop(context);
-              goToPage(page);
-            },
+            onChanged: (value) => page = int.tryParse(value),
+            onFieldSubmitted: (value) => validateAndGo(),
           ),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: validateAndGo, child: const Text('انتقال')),
         ],
       ),
     );
@@ -236,11 +251,21 @@ class _SearchSurahDialogState extends State<_SearchSurahDialog> {
               }
               return ListView.builder(
                 itemCount: items.length,
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 itemBuilder: (context, index) => ListTile(
-                  title: GestureDetector(
-                    onTap: () => widget.onSurahTapped(items[index].number),
-                    child: Text(
-                      '${items[index].arabic} - ${items[index].english}',
+                  onTap: () => widget.onSurahTapped(items[index].number),
+                  leading: Text(
+                    getArabicNumber(items[index].number),
+                    style: TextStyle(
+                      fontFamily: FontFamily.arabicNumbersFontFamily.name,
+                      fontSize: 16,
+                    ),
+                  ),
+                  title: Text(
+                    'سورة ${items[index].arabic} - ${items[index].english}',
+                    style: TextStyle(
+                      fontFamily: FontFamily.rustam.name,
+                      letterSpacing: 0,
                     ),
                   ),
                 ),

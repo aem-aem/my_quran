@@ -39,7 +39,7 @@ class _VerseMenuOverlayState extends State<VerseMenuOverlay>
 
     _scaleAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: Curves.ease,
+      curve: Curves.easeIn,
     );
 
     _animationController.forward();
