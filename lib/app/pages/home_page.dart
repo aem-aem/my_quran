@@ -12,6 +12,7 @@ import 'package:my_quran/app/settings_controller.dart';
 import 'package:my_quran/app/font_size_controller.dart';
 import 'package:my_quran/app/services/reading_position_service.dart';
 import 'package:my_quran/app/utils.dart';
+import 'package:my_quran/app/quran_helpers.dart';
 import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/widgets/font_settings_sheet.dart';
 import 'package:my_quran/app/widgets/navigation_sheet.dart';
@@ -154,37 +155,16 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     final index = (pageNumber - 1).clamp(0, Quran.totalPagesCount - 1);
 
-    // 2. Calculate Alignment (Smart Scroll)
+    // 2. Calculate Alignment
     double alignment = 0;
-
     if (highlightSurah != null && highlightVerse != null) {
-      final pageData = Quran.instance.getPageData(pageNumber);
-
-      int totalVersesOnPage = 0;
-      int targetVerseIndex = 0;
-      bool found = false;
-
-      for (final seg in pageData) {
-        final sNum = seg['surah']!;
-        final start = seg['start']!;
-        final end = seg['end']!;
-        final len = end - start + 1;
-
-        if (!found && sNum == highlightSurah) {
-          if (highlightVerse >= start && highlightVerse <= end) {
-            targetVerseIndex = totalVersesOnPage + (highlightVerse - start);
-            found = true;
-          }
-        }
-
-        totalVersesOnPage += len;
-      }
-
-      if (found && totalVersesOnPage > 0) {
-        final ratio = targetVerseIndex / totalVersesOnPage;
-        if (ratio > 0.5) alignment = -0.1;
-      }
+      alignment = getVerseAlignmentOnPage(
+        pageNumber: pageNumber,
+        highlightSurah: highlightSurah,
+        highlightVerse: highlightVerse,
+      );
     }
+
     // 3. Jump with Alignment
     _itemScrollController.jumpTo(index: index, alignment: alignment);
   }
@@ -653,7 +633,8 @@ class _SurahTextBlockState extends State<_SurahTextBlock> {
 
   int? _findVerseAt(int index) {
     final segs = widget.block.segments;
-    int lo = 0, hi = segs.length - 1;
+    int lo = 0;
+    int hi = segs.length - 1;
     while (lo <= hi) {
       final mid = (lo + hi) >> 1;
       final s = segs[mid];

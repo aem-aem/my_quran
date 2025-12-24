@@ -192,7 +192,7 @@ class VerseMenuDialog extends StatelessWidget {
 
   void _copyVerse(BuildContext context) {
     final surahName = Quran.instance.getSurahName(surah);
-    final textToCopy = '${verse.text}\n\n[$surahName: ${verse}]';
+    final textToCopy = '${verse.text}\n\n[$surahName: $verse]';
     Clipboard.setData(ClipboardData(text: textToCopy));
 
     ScaffoldMessenger.of(
