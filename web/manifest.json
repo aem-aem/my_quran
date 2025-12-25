@@ -1,11 +1,11 @@
 {
-    "name": "my_quran",
-    "short_name": "my_quran",
+    "name": "My Quran",
+    "short_name": "My Quran",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0F766E",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A lightweight, offline Quran reading app",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
