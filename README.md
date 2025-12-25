@@ -21,6 +21,9 @@
   [<img src="assets/readme_assets/get_iod.svg" alt="Get it on IzzyOnDroid" width="24%" align="center">](https://apt.izzysoft.de/fdroid/index/apk/com.dmouayad.my_quran)
   [<img src="assets/readme_assets/get_fdroid.svg" alt="Get it on F-Droid" width="24%" align="center">](https://f-droid.org/packages/com.dmouayad.my_quran)
   [<img src="assets/readme_assets/get_github.svg" alt="Get it on GitHub" width="24%" align="center">](https://github.com/dmouayad/my_quran/releases/latest)
+  <br>
+  <br>
+  [<img src="assets/readme_assets/launch-PWA.svg" alt="Launch on WEB" width="24%" align="center">](https://dmouayad.github.io/my_quran/)
 
   </div>
 </div>
