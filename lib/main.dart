@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/font_size_controller.dart';
+import 'package:my_quran/app/models.dart';
 import 'package:my_quran/app/pages/home_page.dart';
 import 'package:my_quran/app/services/bookmark_service.dart';
 import 'package:my_quran/app/services/reading_position_service.dart';
