@@ -9,7 +9,7 @@ class FontSizeController extends ChangeNotifier {
   static final FontSizeController _instance = FontSizeController._internal();
 
   static const String _fontSizeKey = 'quran_font_size';
-  static const double _defaultFontSize = 24;
+  static const double _defaultFontSize = 34;
   static const double minFontSize = 16;
   static const double maxFontSize = 50;
 
