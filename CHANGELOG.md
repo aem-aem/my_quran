@@ -1,4 +1,4 @@
-### v1.4.0
+### v1.4.2
 
 FEAT: add book mode
 FEAT: add option for true-black background color
