@@ -48,6 +48,10 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     initialPage: widget.initialPosition?.pageNumber ?? 0,
   );
 
+  /// Used to keep track of current scroll mode
+  late bool _isHorizontalScrolling =
+      widget.settingsController.isHorizontalScrolling;
+
   @override
   void initState() {
     super.initState();
@@ -66,6 +70,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     _itemPositionsListener.itemPositions.addListener(_onScrollUpdate);
+    widget.settingsController.addListener(_onScrollingModeChanged);
   }
 
   @override
@@ -77,7 +82,30 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _currentPositionNotifier.dispose();
     Quran.data.removeListener(_onQuranDataChanged);
+    widget.settingsController.removeListener(_onScrollingModeChanged);
     super.dispose();
+  }
+
+  void _onScrollingModeChanged() {
+    final newIsHorizontalScrolling =
+        widget.settingsController.isHorizontalScrolling;
+    if (!newIsHorizontalScrolling && _isHorizontalScrolling) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _itemScrollController.jumpTo(
+          index: _currentPositionNotifier.value.pageNumber - 1,
+        );
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _pageController.jumpToPage(
+            _currentPositionNotifier.value.pageNumber - 1,
+          );
+        });
+      });
+    }
+
+    _isHorizontalScrolling = widget.settingsController.isHorizontalScrolling;
   }
 
   void _onQuranDataChanged() {
