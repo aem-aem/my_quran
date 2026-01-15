@@ -67,4 +67,12 @@ class SettingsService {
   Future<void> setUseTrueBlackBgColor(bool value) async {
     await _prefs.setBool('true_black_bg', value);
   }
+
+  Future<void> setIsHorizontalScrolling(bool value) async {
+    await _prefs.setBool('is_horizontal', value);
+  }
+
+  Future<bool> loadIsHorizontalScroling() async {
+    return await _prefs.getBool('is_horizontal') ?? false;
+  }
 }
