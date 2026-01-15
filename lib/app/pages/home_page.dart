@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:my_quran/app/widgets/settings_sheet.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -14,7 +15,6 @@ import 'package:my_quran/app/services/reading_position_service.dart';
 import 'package:my_quran/app/utils.dart';
 import 'package:my_quran/app/quran_helpers.dart';
 import 'package:my_quran/app/models.dart';
-import 'package:my_quran/app/widgets/font_settings_sheet.dart';
 import 'package:my_quran/app/widgets/navigation_sheet.dart';
 import 'package:my_quran/app/widgets/bookmarks_sheet.dart';
 import 'package:my_quran/app/widgets/verse_menu_dialog.dart';
@@ -191,7 +191,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         statusBarHeight + appBarHeight + infoHeaderHeight;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final appBarDecoration = BoxDecoration(
-      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      color: isDarkMode && widget.settingsController.useTrueBlackBgColor
+          ? Colors.black
+          : Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border(
         bottom: BorderSide(
           color: Theme.of(context).colorScheme.outlineVariant.applyOpacity(0.3),
@@ -201,7 +203,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      extendBodyBehindAppBar: true, // Critical for glass effect
+      extendBodyBehindAppBar: true,
       floatingActionButton: FloatingActionButton(
         backgroundColor: colorScheme.surfaceContainerLow,
         foregroundColor: colorScheme.primary,
@@ -274,7 +276,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 'قرآني',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   color: context.colorScheme.secondary,
                   fontFamily: FontFamily.rustam.name,
                 ),
@@ -287,17 +289,30 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         flexibleSpace: Container(decoration: appBarDecoration),
         actions: [
           IconButton(
-            onPressed: () =>
-                FontSettingsSheet.show(context, widget.settingsController),
-            icon: const Icon(Icons.format_size_outlined),
-          ),
-          IconButton(
             onPressed: widget.settingsController.toggleTheme,
             icon: Icon(switch (widget.settingsController.themeMode) {
               ThemeMode.dark => Icons.dark_mode_outlined,
               ThemeMode.light => Icons.light_mode_outlined,
               ThemeMode.system => Icons.brightness_auto_outlined,
             }),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                showDragHandle: true,
+                barrierColor: Colors.black12,
+                builder: (context) {
+                  final fontController = FontSizeController();
+
+                  return SettingsSheet(
+                    fontController: fontController,
+                    settingsController: widget.settingsController,
+                  );
+                },
+              );
+            },
           ),
         ],
       ),

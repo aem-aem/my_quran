@@ -58,4 +58,13 @@ class SettingsService {
     }
     return FontWeight.w500;
   }
+
+  Future<bool> loadUseTrueBlackBgColor() async {
+    return await _prefs.getBool('true_black_bg') ?? false;
+  }
+
+  // ignore: avoid_positional_boolean_parameters ()
+  Future<void> setUseTrueBlackBgColor(bool value) async {
+    await _prefs.setBool('true_black_bg', value);
+  }
 }

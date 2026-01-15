@@ -16,6 +16,14 @@ class SettingsController extends ChangeNotifier {
   FontFamily _fontFamily = FontFamily.rustam;
   FontWeight _fontWeight = FontWeight.w500;
   ThemeMode _theme = ThemeMode.system;
+  bool _useTrueBlackBgColor = false;
+
+  bool get useTrueBlackBgColor => _useTrueBlackBgColor;
+  set useTrueBlackBgColor(bool value) {
+    _useTrueBlackBgColor = value;
+    notifyListeners();
+    settingsService.setUseTrueBlackBgColor(value);
+  }
 
   String get language => _language;
   set language(String value) {
@@ -61,6 +69,7 @@ class SettingsController extends ChangeNotifier {
     _theme = await settingsService.loadTheme();
     _fontFamily = await settingsService.loadFontFamily();
     _fontWeight = await settingsService.loadFontWeight();
+    _useTrueBlackBgColor = await settingsService.loadUseTrueBlackBgColor();
     debugPrint('✅ Loaded settings');
     debugPrint('📏 Theme: $_theme');
     debugPrint('📏 Font Family: ${_fontFamily.name}');
