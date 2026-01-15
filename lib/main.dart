@@ -64,6 +64,9 @@ class MyApp extends StatelessWidget {
             fontFamily: settingsController.fontFamily.name,
             colorScheme: ColorScheme.fromSeed(
               brightness: Brightness.dark,
+              surface: settingsController.useTrueBlackBgColor
+                  ? const Color(0xFF000000)
+                  : null,
               seedColor: seedColor,
             ),
           ),
