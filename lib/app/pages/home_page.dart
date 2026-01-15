@@ -44,7 +44,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ItemPositionsListener.create();
 
   late final ValueNotifier<ReadingPosition> _currentPositionNotifier;
-  late final _pageController = PageController();
+  late final _pageController = PageController(
+    initialPage: widget.initialPosition?.pageNumber ?? 0,
+  );
 
   @override
   void initState() {
