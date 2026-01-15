@@ -1,3 +1,8 @@
+### v1.4.3
+
+FEAT: extend search index with keys from simple clean quran
+FEAT: remove space if search query contains an isolated waw followed by space
+
 ### v1.4.2
 
 FEAT: add book mode

@@ -30,9 +30,11 @@ class ArabicTextProcessor {
   static List<String> tokenize(String text) {
     if (text.isEmpty) return [];
 
+    // Remove space after و if و is leading or preceded by space
     // Remove punctuation and extra spaces
     // then split by whitespace and filter empty
     return text
+        .replaceAll(RegExp(r'(^|\s)و\s'), r'$1و')
         .replaceAll(
           RegExp(r'[\p{P}\p{S}\p{N}\-\(\)\[\]\{\}]+', unicode: true),
           ' ',
