@@ -167,8 +167,12 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     }
 
-    // 3. Jump with Alignment
-    _itemScrollController.jumpTo(index: index, alignment: alignment);
+    // 3. Jump to new page
+    if (widget.settingsController.isHorizontalScrolling) {
+      _pageController.jumpToPage(index);
+    } else {
+      _itemScrollController.jumpTo(index: index, alignment: alignment);
+    }
   }
 
   // Helper to handle manual tap selection
