@@ -17,6 +17,14 @@ class SettingsController extends ChangeNotifier {
   FontWeight _fontWeight = FontWeight.w500;
   ThemeMode _theme = ThemeMode.system;
   bool _useTrueBlackBgColor = false;
+  bool _isHorizontalScrolling = false;
+
+  bool get isHorizontalScrolling => _isHorizontalScrolling;
+  set isHorizontalScrolling(bool value) {
+    _isHorizontalScrolling = value;
+    notifyListeners();
+    settingsService.setIsHorizontalScrolling(value);
+  }
 
   bool get useTrueBlackBgColor => _useTrueBlackBgColor;
   set useTrueBlackBgColor(bool value) {
@@ -70,6 +78,7 @@ class SettingsController extends ChangeNotifier {
     _fontFamily = await settingsService.loadFontFamily();
     _fontWeight = await settingsService.loadFontWeight();
     _useTrueBlackBgColor = await settingsService.loadUseTrueBlackBgColor();
+    _isHorizontalScrolling = await settingsService.loadIsHorizontalScroling();
     debugPrint('✅ Loaded settings');
     debugPrint('📏 Theme: $_theme');
     debugPrint('📏 Font Family: ${_fontFamily.name}');

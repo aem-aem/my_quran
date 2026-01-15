@@ -172,6 +172,14 @@ class SettingsSheet extends StatelessWidget {
           value: settingsController.useTrueBlackBgColor,
           onChanged: (value) => settingsController.useTrueBlackBgColor = value,
         ),
+        const Divider(),
+        SwitchListTile(
+          title: const Text('وضع الكتاب', style: titleStyle),
+          subtitle: const Text('يمكنك من تقليب الصفحات بالسحب يميناً ويساراً.'),
+          value: settingsController.isHorizontalScrolling,
+          onChanged: (value) =>
+              settingsController.isHorizontalScrolling = value,
+        ),
       ],
     );
   }

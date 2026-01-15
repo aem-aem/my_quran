@@ -44,6 +44,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ItemPositionsListener.create();
 
   late final ValueNotifier<ReadingPosition> _currentPositionNotifier;
+  late final _pageController = PageController();
 
   @override
   void initState() {
@@ -68,6 +69,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _highlightedVerseNotifier.dispose();
+    _pageController.dispose();
     ReadingPositionService.savePosition(_currentPositionNotifier.value);
     _itemPositionsListener.itemPositions.removeListener(_onScrollUpdate);
     WidgetsBinding.instance.removeObserver(this);
@@ -322,27 +324,50 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         child: Stack(
           children: [
             // --- 3. The List (Bottom Layer) ---
-            Positioned.fill(
-              child: ScrollablePositionedList.builder(
-                itemCount: Quran.totalPagesCount,
-                itemScrollController: _itemScrollController,
-                itemPositionsListener: _itemPositionsListener,
-                initialScrollIndex:
-                    (widget.initialPosition?.pageNumber ?? 1) - 1,
-                // This pushes the first page down so it's visible initially
-                padding: EdgeInsets.only(top: totalTopHeaderHeight + 10),
-                itemBuilder: (context, index) => RepaintBoundary(
-                  child: QuranPageWidget(
-                    pageNumber: index + 1,
-                    key: ValueKey(index + 1),
-                    highlightedVerseListenable: _highlightedVerseNotifier,
-                    onVerseTap: _onVerseTapped,
-                    settingsController: widget.settingsController,
+            if (widget.settingsController.isHorizontalScrolling)
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: Quran.totalPagesCount,
+                  onPageChanged: (page) => _updateReadingPosition(page + 1),
+                  itemBuilder: (context, index) {
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                        top: totalTopHeaderHeight + 10,
+                        bottom: 20,
+                      ),
+                      child: QuranPageWidget(
+                        pageNumber: index + 1,
+                        highlightedVerseListenable: _highlightedVerseNotifier,
+                        settingsController: widget.settingsController,
+                        onVerseTap: _onVerseTapped,
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              Positioned.fill(
+                child: ScrollablePositionedList.builder(
+                  // scrollDirection: Axis.horizontal,
+                  itemCount: Quran.totalPagesCount,
+                  itemScrollController: _itemScrollController,
+                  itemPositionsListener: _itemPositionsListener,
+                  initialScrollIndex:
+                      (widget.initialPosition?.pageNumber ?? 1) - 1,
+                  // This pushes the first page down so it's visible initially
+                  padding: EdgeInsets.only(top: totalTopHeaderHeight + 10),
+                  itemBuilder: (context, index) => RepaintBoundary(
+                    child: QuranPageWidget(
+                      pageNumber: index + 1,
+                      key: ValueKey(index + 1),
+                      highlightedVerseListenable: _highlightedVerseNotifier,
+                      onVerseTap: _onVerseTapped,
+                      settingsController: widget.settingsController,
+                    ),
                   ),
                 ),
               ),
-            ),
-
             // --- 2. The Pinned Info Header (Middle Layer) ---
             // We position this EXACTLY below the AppBar
             PinnedHeader(
@@ -482,7 +507,8 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
                 ],
               );
             }),
-            const Divider(height: 32, thickness: 2),
+            if (!widget.settingsController.isHorizontalScrolling)
+              const Divider(height: 32, thickness: 2),
           ],
         ),
       ),
