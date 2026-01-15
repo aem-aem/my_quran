@@ -44,7 +44,13 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ItemPositionsListener.create();
 
   late final ValueNotifier<ReadingPosition> _currentPositionNotifier;
-  late final _pageController = PageController();
+  late final _pageController = PageController(
+    initialPage: widget.initialPosition?.pageNumber ?? 0,
+  );
+
+  /// Used to keep track of current scroll mode
+  late bool _isHorizontalScrolling =
+      widget.settingsController.isHorizontalScrolling;
 
   @override
   void initState() {
@@ -64,6 +70,7 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
 
     _itemPositionsListener.itemPositions.addListener(_onScrollUpdate);
+    widget.settingsController.addListener(_onScrollingModeChanged);
   }
 
   @override
@@ -75,7 +82,30 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _currentPositionNotifier.dispose();
     Quran.data.removeListener(_onQuranDataChanged);
+    widget.settingsController.removeListener(_onScrollingModeChanged);
     super.dispose();
+  }
+
+  void _onScrollingModeChanged() {
+    final newIsHorizontalScrolling =
+        widget.settingsController.isHorizontalScrolling;
+    if (!newIsHorizontalScrolling && _isHorizontalScrolling) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _itemScrollController.jumpTo(
+          index: _currentPositionNotifier.value.pageNumber - 1,
+        );
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _pageController.jumpToPage(
+            _currentPositionNotifier.value.pageNumber - 1,
+          );
+        });
+      });
+    }
+
+    _isHorizontalScrolling = widget.settingsController.isHorizontalScrolling;
   }
 
   void _onQuranDataChanged() {
@@ -167,8 +197,12 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     }
 
-    // 3. Jump with Alignment
-    _itemScrollController.jumpTo(index: index, alignment: alignment);
+    // 3. Jump to new page
+    if (widget.settingsController.isHorizontalScrolling) {
+      _pageController.jumpToPage(index);
+    } else {
+      _itemScrollController.jumpTo(index: index, alignment: alignment);
+    }
   }
 
   // Helper to handle manual tap selection
