@@ -1,3 +1,9 @@
+### v1.4.0
+
+FEAT: add book mode
+FEAT: add option for true-black background color
+FIX: typo in Surah 7 verse 46
+
 ### v1.3.0
 
 FEAT: add PWA support and deployment workflow
