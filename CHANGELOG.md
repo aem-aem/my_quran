@@ -1,3 +1,9 @@
+### v1.4.3
+
+- FIX: Navigation to a specific verse, surah, or page in Book Mode.
+- FIX: Last reading position is now correctly restored when opening the app in Book Mode.
+- FEAT: Keep the reading position when switching between Book Mode and list mode.
+
 ### v1.4.2
 
 FEAT: add book mode
