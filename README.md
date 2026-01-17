@@ -6,7 +6,7 @@
   #  My Quran | قرآني
 
   
-  حجم صغير، خصوصية تامة، بحث سريع ولا يحتاج اتصال بالشبكة.
+  حجم صغير، خصوصية تامة، بحث سريع ولا يحتاج اتصال بالانترنت.
   
   Lightweight. Fast search. No internet required. No analytics.
   
