@@ -5,10 +5,11 @@
 
   #  My Quran | قرآني
 
-  A simple, distraction-free and high-performance Quran application.
   
-  Lightweight. No internet required. No tracking. No analytics.
-  حجم صغير، خصوصية تامة، لا يوجد تتبع، ولا يحتاج اتصال بالشبكة.
+  حجم صغير، خصوصية تامة، بحث سريع ولا يحتاج اتصال بالشبكة.
+  
+  Lightweight. Fast search. No internet required. No analytics.
+  
   <!-- BADGES -->
   ![Version](https://img.shields.io/github/v/release/dmouayad/my_quran?style=flat&labelColor=CCE8E4&color=0F766E&label=Latest%20Version)
   [![Project's License](https://img.shields.io/github/license/dmouayad/my_quran?style=flat&labelColor=CCE8E4&color=0F766E)](./LICENSE)
