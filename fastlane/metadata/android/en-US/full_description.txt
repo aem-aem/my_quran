@@ -1,5 +1,4 @@
-<i>My Quran</i> is a distraction-free, high-performance Quran application.
 
-- 🚀 Lightweight: around 17MB with no additional download size.
-- 📴 100% Offline: No internet connection required.
-- 🔍 Search: fast offline search.
+- 🚀 Lightweight with no additional download size.
+- 📴 Works without internet connection.
+- 🔍 Fast Search.
