@@ -5,7 +5,8 @@
 # Quran text type : Simple (Clean)
 # Output file format : Text (with aya numbers)
 # Do not inlucde pause marks, nor sajdah signs, nor rub-el-hizb signs
-# Then it's converted to JSON format.
+# Remove basmalah from the first aya of each sourah except Fatiha
+# Then convert to JSON format.
 */
 
 import 'dart:convert';
