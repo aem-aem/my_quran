@@ -1,19 +1,19 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
 class ArabicTextProcessor {
-  // A minimal, correct map to handle common typing shortcuts.
-  static const Map<String, String> _spellVariants = {
-    'الرحمن': 'الرحمان',
-    'هذا': 'هاذا',
-    'ذلك': 'ذالك',
-    'ذلكم': 'ذالكم',
-    'لكن': 'لاكن',
-    'إله': 'إلاه',
-    'اله': 'الاه',
-    'السلام': 'السلام',
-    'اسرائيل': 'اسراءيل',
-    'اسحق': 'اسحاق',
-    'اسمعيل': 'اسماعيل',
-    'صرط': 'صراط',
-  };
+  static Map<String, String>? _spellVariants;
+
+  static Future<void> _loadSpellVariants() async {
+    if (_spellVariants != null) return;
+    final jsonString = await rootBundle.loadString('lib/tools/uthmani_to_simple.json');
+    _spellVariants = jsonDecode(jsonString) as Map<String, String>;
+  }
+
+  // Initialize the processor by loading spell variants
+  static Future<void> initialize() async {
+    await _loadSpellVariants();
+  }
 
   // Remove diacritics (tashkeel)
   static String removeDiacritics(String text) {
@@ -28,7 +28,7 @@ class ArabicTextProcessor {
   // Normalize Arabic characters
   static String normalize(String text) {
     // Apply special spelling variants first for user-typed queries.
-    String normalized = _spellVariants[text] ?? text;
+    String normalized = _spellVariants?[text] ?? text;
 
     // Remove punctuation and symbols
     normalized = normalized.replaceAll(
@@ -65,7 +65,6 @@ class ArabicTextProcessor {
     // Remove punctuation and extra spaces
     // then split by whitespace and filter empty
     return text
-        .replaceAll(RegExp(r'(^|\s)و\s'), r'$1و')
         .replaceAll(
           RegExp(r'[\p{P}\p{S}\p{N}\-\(\)\[\]\{\}]+', unicode: true),
           ' ',
