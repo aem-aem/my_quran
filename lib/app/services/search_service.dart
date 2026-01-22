@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:my_quran/app/search/models.dart';
@@ -80,32 +81,34 @@ class SearchService {
   }) {
     final Set<int> results = {};
 
-    // 1. Exact Match (Always check this)
+    // 1. Exact Match
     if (_indexData.containsKey(token)) {
       final list = _indexData[token] as List;
       results.addAll(list.cast<int>());
     }
 
-    // 2. Prefix Match (Only if exactMatch is FALSE)
+    // 2. Prefix Match (if enabled)
     if (!exactMatch) {
-      for (final key in _sortedKeys) {
-        if (key.compareTo(token) < 0) continue;
+      // Find the first key that is not smaller than the token using binary search
+      final startIndex = lowerBound(_sortedKeys, token);
 
-        if (!key.startsWith(token)) {
-          if (key.length >= token.length &&
-              key.substring(0, token.length).compareTo(token) > 0) {
-            break;
+      // Iterate from the start index as long as keys start with the token
+      for (int i = startIndex; i < _sortedKeys.length; i++) {
+        final key = _sortedKeys[i];
+        if (key.startsWith(token)) {
+          // Avoid adding the exact match twice
+          if (key != token && _indexData.containsKey(key)) {
+            final list = _indexData[key] as List;
+            results.addAll(list.cast<int>());
           }
-          continue;
-        }
-
-        // Avoid adding the exact match twice
-        if (key != token && _indexData.containsKey(key)) {
-          final list = _indexData[key] as List;
-          results.addAll(list.cast<int>());
+        } else {
+          // Since the list is sorted, we can stop as soon as we find a key
+          // that doesn't start with the token.
+          break;
         }
       }
     }
+
     return results;
   }
 }
