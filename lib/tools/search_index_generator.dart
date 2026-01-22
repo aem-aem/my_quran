@@ -111,44 +111,11 @@ void _processVerseText(
 
     // Normalize and index all generated variants
     for (final variant in variantsToNormalize) {
-      final normalized = _normalizeBase(variant); // Using the local function
+      final normalized = ArabicTextProcessor.normalizeBase(variant);
       if (normalized.isNotEmpty) {
         invertedIndex.putIfAbsent(normalized, () => <int>{});
         invertedIndex[normalized]!.add(verseId);
       }
     }
   }
-}
-
-String _normalizeBase(String text) {
-  // Remove punctuation and symbols
-  String normalized = text.replaceAll(
-    RegExp(r'[\p{P}\p{S}\p{N}\-\(\)\[\]\{\}]+', unicode: true),
-    '',
-  );
-
-  // Remove all diacritics (including dagger alef, without replacement)
-  normalized = normalized.replaceAll(
-    RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'),
-    '',
-  );
-
-  // Normalize Alef variants: أ إ آ ا → ا
-  normalized = normalized.replaceAll(RegExp('[أإآٱ]'), 'ا');
-
-  // Normalize Taa Marbuta: ة → ه
-  normalized = normalized.replaceAll('ة', 'ه');
-
-  // Normalize Alef Maksura: ى → ي
-  normalized = normalized.replaceAll('ى', 'ي');
-
-  // Normalize Hamza forms
-  normalized = normalized.replaceAll('ؤ', 'و');
-  normalized = normalized.replaceAll('ئ', 'ء');
-  normalized = normalized.replaceAll('ء', '');
-
-  // Remove Tatweel (kashida)
-  normalized = normalized.replaceAll('ـ', '');
-
-  return normalized.trim();
 }
