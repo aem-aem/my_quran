@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:my_quran/app/search/models.dart';
 import 'package:my_quran/app/search/processor.dart';
+import 'package:my_quran/app/services/conditional_import/import.dart';
 
 class SearchService {
   static List<String> _sortedKeys = [];
@@ -33,47 +31,48 @@ class SearchService {
     _currentType = targetFile;
 
     try {
-      final jsonString = await rootBundle.loadString(targetFile);
-
-      // Parse in Isolate
-      final data = await compute(_parseJson, jsonString);
+      final jsonString = await loadAsset('assets/search_index.json');
+      final data = await decodeJson(jsonString) as Map<String, dynamic>;
 
       _sortedKeys = (data['keys'] as List).cast<String>();
       _indexData = data['data'] as Map<String, dynamic>;
 
-      isReady = true;
-      debugPrint('🔍 Search index loaded: $targetFile ✅');
-    } catch (e) {
-      debugPrint('❌ Error loading search index: $e');
-      isReady = false;
-    }
-  }
+      final spellingVariantsString = await loadAsset('assets/simple_to_uthmani.json');
+      // Load spell variants for search normalization
+      ArabicTextProcessor.initialize(spellingVariantsString);
 
-  static Map<String, dynamic> _parseJson(String jsonString) {
-    return jsonDecode(jsonString) as Map<String, dynamic>;
+      isReady = true;
+      debugLog('🔍 Search index and spell variants loaded ✅');
+    } catch (e) {
+      debugLog('❌ Error loading search index: $e');
+    }
   }
 
   static List<SearchResult> search(String rawQuery, {bool exactMatch = false}) {
     if (!isReady || rawQuery.trim().isEmpty) return [];
 
-    final rawWords = ArabicTextProcessor.tokenize(rawQuery);
-    if (rawWords.isEmpty) return [];
+    // Get words grouped with their variants
+    final wordGroups = ArabicTextProcessor.prepareTextForSearchGrouped(rawQuery);
+    debugLog('📝 Word groups: $wordGroups');
 
-    final normalizedWords = rawWords
-        .map(ArabicTextProcessor.normalize)
-        .toList();
+    if (wordGroups.isEmpty) return [];
 
     final List<Set<int>> matchesPerWord = [];
 
-    for (final word in normalizedWords) {
-      final matchesForThisWord = _findMatchesForSingleToken(
-        word,
-        exactMatch: exactMatch,
-      );
+    for (final group in wordGroups) {
+      // Union all variants for a single input word
+      final Set<int> matchesForThisWord = {};
+      for (final variant in group) {
+        matchesForThisWord.addAll(_findMatchesForSingleToken(
+          variant,
+          exactMatch: exactMatch,
+        ));
+      }
       if (matchesForThisWord.isEmpty) return [];
       matchesPerWord.add(matchesForThisWord);
     }
 
+    // Intersection across different input words
     Set<int> finalIds = matchesPerWord[0];
     for (int i = 1; i < matchesPerWord.length; i++) {
       finalIds = finalIds.intersection(matchesPerWord[i]);

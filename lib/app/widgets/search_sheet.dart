@@ -50,8 +50,8 @@ class _QuranSearchBottomSheetState extends State<QuranSearchBottomSheet> {
 
     setState(() => _isSearching = true);
 
-    final rawTokens = ArabicTextProcessor.tokenize(query);
-    _currentQueryTokens = rawTokens.toSet();
+    final tokens = ArabicTextProcessor.prepareTextForSearchGrouped(query);
+    _currentQueryTokens = tokens.expand((group) => group).toSet();
 
     // Pass the toggle value to the service
     final results = SearchService.search(query, exactMatch: _isExactMatch);
