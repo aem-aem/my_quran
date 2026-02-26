@@ -31,7 +31,7 @@ class SearchService {
     _currentType = targetFile;
 
     try {
-      final jsonString = await loadAsset('assets/search_index.json');
+      final jsonString = await loadAsset(targetFile);
       final data = await decodeJson(jsonString) as Map<String, dynamic>;
 
       _sortedKeys = (data['keys'] as List).cast<String>();
@@ -45,6 +45,7 @@ class SearchService {
       debugLog('🔍 Search index and spell variants loaded ✅');
     } catch (e) {
       debugLog('❌ Error loading search index: $e');
+      isReady = false;
     }
   }
 
