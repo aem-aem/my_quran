@@ -1,83 +1,52 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
 
 class ArabicTextProcessor {
-  static Map<String, String>? _spellVariants;
-
-  static Future<void> _loadSpellVariants() async {
-    if (_spellVariants != null) return;
-    final jsonString = await rootBundle.loadString('lib/tools/uthmani_to_simple.json');
-    final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
-    _spellVariants = decoded.map((key, value) => MapEntry(normalizeBase(key), value as String));
-  }
-
-  static String normalizeBase(String text) {
-    String normalized = text.replaceAll(
-      RegExp(r'[\p{P}\p{S}\p{N}\-\(\)\[\]\{\}]+', unicode: true),
-      '',
-    );
-    normalized = normalized.replaceAll(
-      RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'),
-      '',
-    );
-    normalized = normalized.replaceAll(RegExp('[أإآٱ]'), 'ا');
-    normalized = normalized.replaceAll('ة', 'ه');
-    normalized = normalized.replaceAll('ى', 'ي');
-    normalized = normalized.replaceAll('ؤ', 'و');
-    normalized = normalized.replaceAll('ئ', 'ء');
-    normalized = normalized.replaceAll('ء', '');
-    normalized = normalized.replaceAll('ـ', '');
-    return normalized.trim();
-  }
+  static Map<String, List<String>>? _spellVariants;
 
   // Initialize the processor by loading spell variants
-  static Future<void> initialize() async {
-    await _loadSpellVariants();
+  static void initialize(String jsonString) {
+    if (_spellVariants != null) return;
+    final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
+    
+    // Build a map where each key maps to a list of values
+    final Map<String, List<String>> variants = {};
+    for (final entry in decoded.entries) {
+      final key = entry.key;
+      final value = entry.value;
+      // Handle both String and List<String> values from JSON
+      if (value is String) {
+        variants.putIfAbsent(key, () => []).add(value);
+      } else if (value is List) {
+        variants[key] = value.cast<String>();
+      }
+    }
+    print('🔤 Loaded ${variants.length} spell variants');
+    _spellVariants = variants;
   }
 
-  // Remove diacritics (tashkeel)
-  static String removeDiacritics(String text) {
-    // Convert dagger alef to standard alef for consistency.
-    text = text.replaceAll('\u0670', 'ا');
-    return text.replaceAll(
-      RegExp(r'[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED]'),
-      '',
-    );
-  }
-
-  // Normalize Arabic characters
+  /// Normalize Arabic characters by removing diacritics and marks
   static String normalize(String text) {
-    // Apply special spelling variants first for user-typed queries.
-    String normalized = _spellVariants?[text] ?? text;
-
-    // Remove punctuation and symbols
-    normalized = normalized.replaceAll(
-      RegExp(r'[\p{P}\p{S}\p{N}\-\(\)\[\]\{\}]+', unicode: true),
+    // Remove diacritics and Quranic annotation marks:
+    // \u200E-\u200F: LRM/RLM (bidirectional formatting)
+    // \u0610-\u061A: Arabic Koranic Annotation Signs
+    // \u0640: Tatweel (Kashida)
+    // \u064B-\u065F: Standard diacritics (tashkeel)
+    // \u0660-\u0669: Eastern Arabic-Indic digits
+    // \u0670: Superscript Alef (dagger alef)
+    // \u06D6-\u06ED: Quranic marks
+    // \u06F0-\u06F9: Extended Arabic-Indic digits (Persian)
+    var normalized = text.replaceAll(
+      RegExp(r'[\u200E\u200F\u0610-\u061A\u0640\u064B-\u065F\u0660-\u0669\u0670\u06D6-\u06F9]'),
       '',
     );
-    normalized = removeDiacritics(normalized);
 
-    // Normalize Alef variants: أ إ آ ا → ا
-    normalized = normalized.replaceAll(RegExp('[أإآٱ]'), 'ا');
-
-    // Normalize Taa Marbuta: ة → ه
-    normalized = normalized.replaceAll('ة', 'ه');
-
-    // Normalize Alef Maksura: ى → ي
-    normalized = normalized.replaceAll('ى', 'ي');
-
-    // Normalize Hamza forms
-    normalized = normalized.replaceAll('ؤ', 'و');
-    normalized = normalized.replaceAll('ئ', 'ء');
-    normalized = normalized.replaceAll('ء', '');
-
-    // Remove Tatweel (kashida)
-    normalized = normalized.replaceAll('ـ', '');
+    // Replace Alef Wasla (ٱ) with regular Alef (ا)
+    normalized = normalized.replaceAll('\u0671', '\u0627');
 
     return normalized.trim();
   }
 
-  // Tokenize Arabic text into words
+  /// Tokenize Arabic text into words
   static List<String> tokenize(String text) {
     if (text.isEmpty) return [];
 
@@ -91,5 +60,26 @@ class ArabicTextProcessor {
         .split(RegExp(r'\s+'))
         .where((word) => word.isNotEmpty)
         .toList();
+  }
+
+  /// Returns a list of word groups, where each group contains the normalized word
+  /// and its spell variants. Used for search where variants should be OR'd together.
+  static List<List<String>> prepareTextForSearchGrouped(String text) {
+    final tokens = tokenize(text);
+    final List<List<String>> wordGroups = [];
+
+    for (final token in tokens) {
+      final normalized = normalize(token);
+      if (normalized.isEmpty) continue;
+
+      final List<String> group = [normalized];
+      // Add spell variants if they exist
+      if (_spellVariants != null && _spellVariants!.containsKey(normalized)) {
+        group.addAll(_spellVariants![normalized]!);
+      }
+      wordGroups.add(group);
+    }
+
+    return wordGroups;
   }
 }
